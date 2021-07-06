@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Risk Control</string>
+    <string name="factory">Производство</string>
+    <string name="date">Дата</string>
+    <string name="models_ratings">Модель оценки</string>
+    <string name="from">От</string>
+    <string name="to">До</string>
+    <string name="create">Создать</string>
+    <string name="back">Назад</string>
+    <string name="name_factory">Название</string>
+    <string name="description">Описание</string>
+</resources>
