@@ -35,8 +35,8 @@ public class CreateFactory extends AppCompatActivity {
         intent.putExtra("currentModelsRating", currentModelsRating);
         EditText editFrom = findViewById(R.id.editTextFrom);
         EditText editTo = findViewById(R.id.editTextTo);
-        intent.putExtra("editFrom", editFrom.getText());
-        intent.putExtra("editTo", editTo.getText());
+        intent.putExtra("editFrom", this.editFrom);
+        intent.putExtra("editTo", this.editTo);
         startActivity(intent);
     }
 

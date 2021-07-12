@@ -3,10 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <ListView
-        android:id="@+id/listRegisters"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <ImageButton
         android:id="@+id/addButton"
@@ -18,4 +14,26 @@
         android:layout_marginBottom="50dp"
         android:onClick="buttonAddOnClick"
         app:srcCompat="@android:drawable/ic_input_add" />
+
+    <TableLayout
+        android:id="@+id/main_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </TableLayout>
 </RelativeLayout>

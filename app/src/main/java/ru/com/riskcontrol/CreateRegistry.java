@@ -7,14 +7,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -77,8 +77,7 @@ public class CreateRegistry extends AppCompatActivity {
         spinner_factories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                System.out.println(factories.length);
-                if (l==factories.length-1){
+                if (l==factories.length){
                     Intent intent = new Intent(CreateRegistry.this, CreateFactory.class);
 
                     intent.putExtra("currentModelsRating", currentModelsRating);
@@ -96,8 +95,7 @@ public class CreateRegistry extends AppCompatActivity {
                 return;
             }
         });
-
-        if (factories.length==0){
+        if (factories.length<1){
             Intent intent = new Intent(CreateRegistry.this, CreateFactory.class);
 
             intent.putExtra("currentModelsRating", currentModelsRating);
@@ -124,7 +122,7 @@ public class CreateRegistry extends AppCompatActivity {
         EditText editTo = findViewById(R.id.editTextTo);
         if (spinnerFactoies.getSelectedItemPosition()==factories.length) return;
 
-        Intent intent = new Intent(CreateRegistry.this, RiskRegistry.class);
+        Intent intent = new Intent(CreateRegistry.this, CurrentRegistry.class);
 
         int idFactory = factories[spinnerFactoies.getSelectedItemPosition()].id;
         int model = spinnerModels.getSelectedItemPosition();
@@ -136,12 +134,24 @@ public class CreateRegistry extends AppCompatActivity {
 
             ContentValues cv = new ContentValues();
 
-
             cv.put("factory_id", idFactory);
+            cv.put("model", model);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, 1);
+            Date date = cal.getTime();
+            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy");
+            String inActiveDate = format1.format(date);
 
-            cv.put("date_of_creation", date.getDate()+"."+date.getMonth()+"."+date.getYear());
+            cv.put("date_of_creation", inActiveDate);
             cv.put("scale", editFrom.getText().toString().trim() + "/" + editTo.getText().toString().trim());
             db.insert("registries", null , cv);
+            Cursor cursor = db.query("registries", null, null,null,null,null,null);
+            {
+                cursor.moveToLast();
+                int cursorId= cursor.getColumnIndex("_id");
+                intent.putExtra("id", cursor.getInt(cursorId));
+                cursor.close();
+            }
         }
 
         startActivity(intent);

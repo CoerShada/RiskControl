@@ -4,11 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class RiskRegistry extends AppCompatActivity {
+public class CreateRiskType extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_risk_registry);
+        setContentView(R.layout.activity_create_risk_type);
     }
 }
