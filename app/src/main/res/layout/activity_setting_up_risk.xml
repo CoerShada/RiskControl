@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="20dp"
-    tools:context=".CreateRisk">
+    tools:context=".SettingUpRiskActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="TextView" />
+            android:text="0" />
 
         <TextView
             android:id="@+id/significance_of_risk"
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="TextView" />
+            android:text="0" />
 
         <TextView
             android:id="@+id/prioritizing_risk"
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="0dp"
-            android:text="TextView" />
+            android:text="0" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

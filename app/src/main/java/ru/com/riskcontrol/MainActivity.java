@@ -15,18 +15,18 @@ public class MainActivity extends AppCompatActivity {
     DBHelper dpHelper = new DBHelper(this);
     Registry[] registries;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TableLayout main_table = null;
+        TableLayout main_table;
         main_table = findViewById(R.id.main_table);
         main_table.setColumnShrinkable(0, true);
         int rows;
 
         SQLiteDatabase db = dpHelper.getReadableDatabase();
-
 
         Cursor cursor = db.query("registries", null, null,null,null,null,null);
         {
@@ -36,14 +36,10 @@ public class MainActivity extends AppCompatActivity {
             cursor.moveToFirst();
             int index = 0;
             int cursorId= cursor.getColumnIndex("_id");
-            int cursorDateOfCreation = cursor.getColumnIndex("date_of_creation");
-            int cursorRisksIds = cursor.getColumnIndex("risks_ids");
-            int cursorScale = cursor.getColumnIndex("scale");
-            int cursorFactory = cursor.getColumnIndex("factory_id");
             if (cursor.getCount()>0) {
                 do {
 
-                    registries[index] = new Registry(cursor.getInt(cursorId), cursor.getString(cursorDateOfCreation), cursor.getInt(cursorFactory) ,cursor.getString(cursorRisksIds), Float.parseFloat(cursor.getString(cursorScale).substring(0, cursor.getString(cursorScale).indexOf("/"))), Float.parseFloat(cursor.getString(cursorScale).substring(cursor.getString(cursorScale).indexOf("/")+1)));
+                    registries[index] = new Registry(cursor.getInt(cursorId), this);
                     index++;
                 } while (cursor.moveToNext());
             }
@@ -61,23 +57,26 @@ public class MainActivity extends AppCompatActivity {
             tableRow.setId(registries[i].id);
 
             TextView date = new TextView(this);
-            date.setText(registries[i].dateOfCreation);
+            date.setText(registries[i].getDateOfCreation());
             tableRow.addView(date, 0);
 
-            tableRow.setOnLongClickListener(new View.OnLongClickListener() {
+            tableRow.setOnLongClickListener(v -> {
+                int id = v.getId();
+                Intent intent = new Intent(MainActivity.this, CurrentRegistryActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
+                return true;
+            });
 
-                @Override
-                public boolean onLongClick(View v) {
-                    int id = v.getId();
-                    Intent intent = new Intent(MainActivity.this, CurrentRegistry.class);
-                    intent.putExtra("id", id);
-                    startActivity(intent);
-                    return true;
-                }
+            tableRow.setOnClickListener(v -> {
+                int id = v.getId();
+                Intent intent = new Intent(MainActivity.this, SettingUpRegistryActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
             });
 
 
-            cursor = db.query("factories", null, "_id=?",new String[]{String.valueOf(registries[i].factory_id)},null,null,null);
+            cursor = db.query("factories", null, "_id=?",new String[]{String.valueOf(registries[i].getFactoryId())},null,null,null);
             cursor.moveToFirst();
             int cursorName = cursor.getColumnIndex("name");
 
@@ -93,8 +92,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     public void buttonAddOnClick(View view){
-        Intent intent = new Intent(MainActivity.this, CreateRegistry.class);
+        Intent intent = new Intent(MainActivity.this, SettingUpRegistryActivity.class);
         startActivity(intent);
     }
 }

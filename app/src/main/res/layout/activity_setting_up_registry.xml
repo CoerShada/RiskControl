@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateRegistry">
+    tools:context=".SettingUpRegistryActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -88,10 +88,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:onClick="buttonSaveOnClick"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/back"
+                android:id="@+id/button_back_registry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -102,14 +103,15 @@
 
 
             <Button
-                android:id="@+id/create"
+                android:id="@+id/button_save_registry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:onClick="buttonCreateOnClick"
-                android:text="@string/create" />
+                android:text="@string/save"
+                android:onClick="buttonSaveOnClick"
+                android:visibility="visible" />
         </LinearLayout>
 
     </LinearLayout>

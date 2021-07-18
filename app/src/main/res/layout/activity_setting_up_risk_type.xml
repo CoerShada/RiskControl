@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateRiskType">
+    tools:context=".SettingUpRiskTypeActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         tools:layout_editor_absoluteY="299dp">
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/riskTypeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -23,7 +23,7 @@
             />
 
         <EditText
-            android:id="@+id/editTextNumberDecimal"
+            android:id="@+id/riskTypeValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -42,6 +42,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:onClick="buttonBackOnClick"
                 android:text="@string/back" />
 
             <Button
@@ -51,6 +52,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:onClick="buttonCreateOnClick"
                 android:text="@string/create" />
         </LinearLayout>
 

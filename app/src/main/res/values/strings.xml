@@ -6,12 +6,16 @@
     <string name="from">От</string>
     <string name="to">До</string>
     <string name="create">Создать</string>
+    <string name="save">Сохранить</string>
     <string name="back">Назад</string>
     <string name="name">Название</string>
     <string name="value">Значение</string>
     <string name="description">Описание</string>
     <string name="risk_type">Тип риска</string>
     <string name="risk_name">Наименование риска</string>
+    <string name="magnitude_of_risk">Величина риска</string>
+    <string name="significance_of_risk">Значимость риска</string>
+    <string name="prioritizing_risk">Приоритетность риска</string>
     <string name="assessment_of_the_likelihood_of_occurrence">Оценка вероятности возникновения</string>
     <string name="detection_probability_estimate">Оценка вероятности обнаружения</string>
     <string name="severity_assessment">Оценка тяжести последствий</string>

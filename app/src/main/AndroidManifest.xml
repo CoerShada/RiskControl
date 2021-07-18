@@ -9,11 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RiskControl">
-        <activity android:name=".CreateRiskType"></activity>
-        <activity android:name=".CreateRisk" />
-        <activity android:name=".CreateFactory" />
-        <activity android:name=".CurrentRegistry" />
-        <activity android:name=".CreateRegistry" />
+        <activity android:name=".SettingUpRiskTypeActivity"></activity>
+        <activity android:name=".SettingUpRiskActivity" />
+        <activity android:name=".SettingUpFactoryActivity" />
+        <activity android:name=".CurrentRegistryActivity" />
+        <activity android:name=".SettingUpRegistryActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
