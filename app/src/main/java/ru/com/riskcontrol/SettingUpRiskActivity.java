@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -18,29 +19,31 @@ import android.widget.TextView;
 public class SettingUpRiskActivity extends AppCompatActivity {
 
     RiskType[] riskTypes;
-    Registry thisRegistry;
+    Registry currentRegistry;
+    Risk currentRisk;
     DBHelper dpHelper = new DBHelper(this);
-    double[] resultsValues = new double[]{0, 0, 0};
 
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting_up_risk);
         SQLiteDatabase db = dpHelper.getReadableDatabase();
-        int id = getIntent().getIntExtra("id", 0);
+        int registry_id = getIntent().getIntExtra("registry_id", -1);
+        int risk_id = getIntent().getIntExtra("risk_id", -1);
+        currentRegistry = new Registry(registry_id, this);
+        loadRisk(risk_id);
+
         Cursor cursor = db.query("risk_types", null, null,null,null,null,null);
         {
             this.riskTypes = new RiskType[cursor.getCount()];
             cursor.moveToFirst();
             int index = 0;
             int cursorId = cursor.getColumnIndex("_id");
-            int cursorName = cursor.getColumnIndex("name");
-            int cursorValue = cursor.getColumnIndex("value");
             if (cursor.getCount()>0) {
                 do {
-                    riskTypes[index] = new RiskType(cursor.getInt(cursorId), cursor.getString(cursorName), cursor.getInt(cursorValue));
-                    index++;
+                    riskTypes[index++] = new RiskType(cursor.getInt(cursorId), this);
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -50,29 +53,11 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             riskTypesString[i] = riskTypes[i].name;
         riskTypesString[riskTypesString.length-1] = "Добавить";
 
-        thisRegistry = new Registry(id, this);
-
-        setContentView(R.layout.activity_setting_up_risk);
-        Spinner spinnerRiskTypes = (Spinner) findViewById(R.id.spinnerRiskType);
+        Spinner spinnerRiskTypes = (Spinner) findViewById(R.id.spinner_risk_type);
         ArrayAdapter<String> adapterRiskTypes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, riskTypesString);
         adapterRiskTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRiskTypes.setAdapter(adapterRiskTypes);
 
-        TextView[] results = new TextView[]{findViewById(R.id.magnitude_of_risk),
-                                            findViewById(R.id.significance_of_risk),
-                                            findViewById(R.id.prioritizing_risk)};
-
-        String[] resultsDescription = new String[]{ getApplicationContext().getString(R.string.magnitude_of_risk),
-                                                    getApplicationContext().getString(R.string.significance_of_risk),
-                                                    getApplicationContext().getString(R.string.prioritizing_risk)};
-
-        SeekBar[] seekBars = new SeekBar[] {findViewById(R.id.seekBar_assessment_of_the_likelihood_of_occurrence),
-                                            findViewById(R.id.seekBar_detection_probability_estimate),
-                                            findViewById(R.id.seekBar_severity_assessment)};
-
-        TextView[] values = new TextView[]{ findViewById(R.id.assessment_of_the_likelihood_of_occurrence_value),
-                                            findViewById(R.id.detection_probability_estimate_value),
-                                            findViewById(R.id.severity_assessment_value)};
 
         spinnerRiskTypes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -88,56 +73,111 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             }
         });
 
-        for (int i = 0; i<seekBars.length; i++) {
-            values[i].setText(String.valueOf(thisRegistry.getFrom()));
-            final int finalI = i;
-            seekBars[i].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                    values[finalI].setText(String.valueOf(thisRegistry.getFrom() + (thisRegistry.getTo() - thisRegistry.getFrom()) / 100 * progress));
-                    SeekBar seekBar_assessment_of_the_likelihood_of_occurrence = findViewById(R.id.seekBar_assessment_of_the_likelihood_of_occurrence);
+        SeekBar seekBarProbabilityOfOccurrence= findViewById(R.id.seekbar_probability_of_occurrence);
+        SeekBar seekBarDetectionProbabilityEstimate= findViewById(R.id.seekbar_detection_probability_estimate);
+        SeekBar seekBarSeverityAssessment= findViewById(R.id.seekbar_severity_assessment);
 
-                    SeekBar seekBar_severity_assessment = findViewById(R.id.seekBar_severity_assessment);
+        seekBarProbabilityOfOccurrence.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                currentRisk.setProbabilityOfOccurrence(seekBarProbabilityOfOccurrence.getProgress());
+                TextView textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
+                textViewProbabilityOfOccurrenceValue.setText(String.valueOf((currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * progress + currentRegistry.getFrom()));
+                CalculateResults();
+            }
 
-                    //calculate magnitude of risk in scale from 0 to 100
-                    if (thisRegistry.getModel()==0) {
-                        resultsValues[0] = Math.pow(seekBar_assessment_of_the_likelihood_of_occurrence.getProgress() * seekBar_severity_assessment.getProgress(), 0.5);
-                    }
-                    else{
-                        SeekBar seekBar_detection_probability_estimate = findViewById(R.id.seekBar_detection_probability_estimate);
-                        resultsValues[0] = Math.pow(seekBar_assessment_of_the_likelihood_of_occurrence.getProgress() * seekBar_severity_assessment.getProgress() * seekBar_detection_probability_estimate.getProgress(), 0.33333);
-                    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 
-                    //output converted results for users
-                    for (int i = 0; i<results.length; i++) {
-                        int red;
-                        int green;
+        seekBarDetectionProbabilityEstimate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                currentRisk.setDetectionProbabilityEstimate(seekBarDetectionProbabilityEstimate.getProgress());
+                TextView textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
+                textViewDetectionProbabilityEstimateValue.setText(String.valueOf((currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * progress + currentRegistry.getFrom()));
+                CalculateResults();
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
-                        if (resultsValues[i] > 50) {
-                            red = 255;
-                            green = (int) (255 - (resultsValues[i] * 5.1));
-                        } else {
-                            red = (int) (resultsValues[i] * 5.1);
-                            green = 255;
-                        }
-                        results[i].setTextColor(Color.rgb(red, green, 0));
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 
-                        results[i].setText(resultsDescription[i] + ": " + String.format("%.3f", (thisRegistry.getTo() - thisRegistry.getFrom()) / 100 * resultsValues[i] + thisRegistry.getFrom()));
+        seekBarSeverityAssessment.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                currentRisk.setSeverityAssessment(seekBarSeverityAssessment.getProgress());
+                TextView textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
+                textViewSeverityAssessmentValue.setText(String.valueOf((currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * progress + currentRegistry.getFrom()));
+                CalculateResults();
+            }
 
-                    }
-                }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {}
-            });
+    }
 
+    private void loadRisk(int id){
+        this.currentRisk = new Risk(id, this);
+        if (this.currentRisk.id==-1) return;
+
+    }
+
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+    public void CalculateResults(){
+        TextView[] results = new TextView[]{findViewById(R.id.magnitude_of_risk),
+                findViewById(R.id.significance_of_risk),
+                findViewById(R.id.prioritizing_risk)};
+
+        String[] resultsDescription = new String[]{ getApplicationContext().getString(R.string.magnitude_of_risk),
+                getApplicationContext().getString(R.string.significance_of_risk),
+                getApplicationContext().getString(R.string.prioritizing_risk)};
+
+        //calculate magnitude of risk in scale from 0 to 100
+        currentRisk.calculateMagnitudeOfRisk(currentRegistry.getModel()==0);
+
+        //output converted results for users
+        for (int i = 0; i<results.length; i++) {
+            int red;
+            int green;
+
+            if (currentRisk.getMagnitudeOfRisk() > 50) {
+                red = 255;
+                green = (int) (255 - (currentRisk.getMagnitudeOfRisk() * 5.1));
+            } else {
+                red = (int) (currentRisk.getMagnitudeOfRisk() * 5.1);
+                green = 255;
+            }
+            results[i].setTextColor(Color.rgb(red, green, 0));
+
+            results[i].setText(resultsDescription[i] + ": " + String.format("%.3f", (currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom()));
+
+        }
+    }
+
+    public void onClickSave(View view){
+
+        TextView name = findViewById(R.id.textinput_risk_name);
+        Spinner riskTypes = findViewById(R.id.spinner_risk_type);
+        if (name.getText().toString().trim().length()>0){
+            Intent intent = new Intent(SettingUpRiskActivity.this, CurrentRegistryActivity.class);
+            this.currentRisk.setName(name.getText().toString().trim());
+            this.currentRisk.setRiskTypeId(this.riskTypes[riskTypes.getSelectedItemPosition()].id);
+            this.currentRisk.save(this);
+            this.currentRegistry.addRisk(this);
+            this.currentRegistry.save(this);
+            startActivity(intent);
         }
     }
 }

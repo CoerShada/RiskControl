@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
             tableRow.setOnLongClickListener(v -> {
                 int id = v.getId();
-                Intent intent = new Intent(MainActivity.this, CurrentRegistryActivity.class);
+                Intent intent = new Intent(MainActivity.this, SettingUpRegistryActivity.class);
                 intent.putExtra("id", id);
                 startActivity(intent);
                 return true;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
             tableRow.setOnClickListener(v -> {
                 int id = v.getId();
-                Intent intent = new Intent(MainActivity.this, SettingUpRegistryActivity.class);
+                Intent intent = new Intent(MainActivity.this, CurrentRegistryActivity.class);
                 intent.putExtra("id", id);
                 startActivity(intent);
             });

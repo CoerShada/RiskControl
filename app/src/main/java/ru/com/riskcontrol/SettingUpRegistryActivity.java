@@ -25,10 +25,9 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        loadFactories();
-        int id = getIntent().getIntExtra("id", -1);
         super.onCreate(savedInstanceState);
 
+        loadFactories();
         String[] factoriesStrings = new String[factories.length+1];
         for (int i = 0; i<factories.length; i++)
             factoriesStrings[i] = factories[i].name;
@@ -48,19 +47,6 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
         spinnerModelsRatings.setAdapter(adapterModelsRatings);
 
 
-
-        spinnerModelsRatings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                if (i==factories.length){
-                    Intent intent = new Intent(SettingUpRegistryActivity.this, SettingUpFactoryActivity.class);
-                    startActivity(intent);
-                }
-            }
-
-            public void onNothingSelected(AdapterView<?> adapterView) { }
-        });
-
         spinnerFactories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -72,15 +58,30 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
 
             public void onNothingSelected(AdapterView<?> adapterView) { }
         });
+
+        spinnerFactories.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(id);
+                System.out.println(position);
+                if (position!=factories.length){
+                    Intent intent = new Intent(SettingUpRegistryActivity.this, SettingUpFactoryActivity.class);
+                    intent.putExtra("id", factories[position].id);
+                    startActivity(intent);
+                }
+                return true;
+            }
+        });
+
+
         if (factories.length<1){
             Intent intent = new Intent(SettingUpRegistryActivity.this, SettingUpFactoryActivity.class);
             startActivity(intent);
         }
 
-        if(id>-1)
-            loadExtendsRegistry(id);
-        else
-            this.currentRegistry = new Registry();
+
+        loadExtendsRegistry(getIntent().getIntExtra("id", -1));
+
 
     }
 
@@ -93,12 +94,9 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
             cursor.moveToFirst();
             int index = 0;
             int cursorId = cursor.getColumnIndex("_id");
-            int cursorName = cursor.getColumnIndex("name");
-            int cursorDesc = cursor.getColumnIndex("description");
             if (cursor.getCount()>0) {
                 do {
-                    factories[index] = new Factory(cursor.getInt(cursorId), cursor.getString(cursorName), cursor.getString(cursorDesc));
-                    index++;
+                    factories[index++] = new Factory(cursor.getInt(cursorId), this);
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -117,6 +115,7 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
                 break;
             }
         }
+        if (id==-1) return;
         spinnerFactoies.setSelection(index);
 
         Spinner spinnerModelsRatings = (Spinner) findViewById(R.id.spinner_rating_model);

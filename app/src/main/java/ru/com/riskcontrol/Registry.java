@@ -24,15 +24,24 @@ public class Registry {
     private short model;
 
     public Registry(int id, Context context){
-        DBHelper dpHelper = new DBHelper(context);
         this.id = id;
+        if (id==-1) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, 1);
+            Date date = cal.getTime();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
+            this.dateOfCreation = format1.format(date);
+            return;
+        }
+
+        DBHelper dpHelper = new DBHelper(context);
         SQLiteDatabase db = dpHelper.getReadableDatabase();
 
-        Cursor cursor = db.query("registries", null, "_id=?",new String[]{String.valueOf(id)},null,null,null);
+        Cursor cursor = db.query("registries", null, "_id=?", new String[]{String.valueOf(id)},null,null,null);
         {
 
             int cursorDateOfCreation = cursor.getColumnIndex("date_of_creation");
-            int cursorRisksIds = cursor.getColumnIndex("risks_ids");
+            //int cursorRisksIds = cursor.getColumnIndex("risks_ids");
             int cursorModels = cursor.getColumnIndex("model");
             int cursorScale = cursor.getColumnIndex("scale");
             int cursorFactory = cursor.getColumnIndex("factory_id");
@@ -59,15 +68,7 @@ public class Registry {
         }
     }
 
-    public Registry(){
-        this.id = -1;
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 1);
-        Date date = cal.getTime();
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
-        this.dateOfCreation = format1.format(date);
 
-    }
 
 
     public String getDateOfCreation(){
@@ -120,11 +121,24 @@ public class Registry {
         return risksIds;
     }
 
-    public void addRisk(int riskId){
+    public void addRisk(Context context){
         if (canUpdate()){
+            Risk risk;
+            DBHelper dpHelper = new DBHelper(context);
+            SQLiteDatabase db = dpHelper.getReadableDatabase();
+            Cursor cursor = db.query("risks", null, null,null,null,null,null);
+            {
+                if (cursor.getCount()==0) return;
+                cursor.moveToLast();
+                int cursorId= cursor.getColumnIndex("_id");
 
-                //risksIds = new ArrayList<>(0);
-            this.risksIds.add(riskId);
+                risk = new Risk(cursor.getInt(cursorId), context);
+
+                cursor.close();
+            }
+
+
+            this.risksIds.add(risk.id);
         }
     }
 
@@ -155,7 +169,7 @@ public class Registry {
 
 
         cv.put("factory_id", this.factoryId);
-        cv.put("model", this.getModel());
+        cv.put("model", this.model);
         cv.put("date_of_creation", this.dateOfCreation);
 
         StringBuilder risksIdsString = new StringBuilder();

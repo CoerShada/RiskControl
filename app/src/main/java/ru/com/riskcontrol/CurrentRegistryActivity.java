@@ -49,7 +49,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
 
     public void buttonAddOnClick(View view){
         Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-        intent.putExtra("id", thisRegistry.id);
+        intent.putExtra("registry_id", thisRegistry.id);
         startActivity(intent);
     }
 }

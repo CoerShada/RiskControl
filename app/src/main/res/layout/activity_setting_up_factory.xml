@@ -14,7 +14,7 @@
 
 
         <EditText
-            android:id="@+id/label_factory_name"
+            android:id="@+id/textview_factory_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="30"
@@ -29,7 +29,7 @@
             android:paddingBottom="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description"
+                android:id="@+id/textview_factory_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/description" />
