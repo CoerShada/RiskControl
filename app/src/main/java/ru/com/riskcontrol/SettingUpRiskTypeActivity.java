@@ -11,13 +11,14 @@ import android.widget.EditText;
 
 public class SettingUpRiskTypeActivity extends AppCompatActivity {
 
+    private int registryId;
     RiskType currentRiskType;
     DBHelper dpHelper = new DBHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.registryId = getIntent().getIntExtra("registry_id", -1);
         this.currentRiskType = new RiskType(getIntent().getIntExtra("id", -1), this);
         if (this.currentRiskType.id>-1){
 
@@ -33,13 +34,13 @@ public class SettingUpRiskTypeActivity extends AppCompatActivity {
 
     public void buttonBackOnClick(View view){
         Intent intent = new Intent(SettingUpRiskTypeActivity.this, SettingUpRiskActivity.class);
-
+        intent.putExtra("registry_id", this.registryId);
         startActivity(intent);
     }
 
     public void buttonCreateOnClick(View view){
         Intent intent = new Intent(SettingUpRiskTypeActivity.this, SettingUpRiskActivity.class);
-
+        intent.putExtra("registry_id", this.registryId);
         EditText name = findViewById(R.id.textview_risk_type_name);
         EditText value = findViewById(R.id.textview_risk_type_value);
 

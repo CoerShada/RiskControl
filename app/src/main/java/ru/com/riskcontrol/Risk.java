@@ -96,7 +96,7 @@ public class Risk {
 
     public void save(Context context){
         DBHelper dpHelper = new DBHelper(context);
-        SQLiteDatabase db = dpHelper.getReadableDatabase();
+        SQLiteDatabase db = dpHelper.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
         cv.put("name", this.name);
@@ -105,6 +105,9 @@ public class Risk {
         cv.put("detection_probability_estimate", this.severityAssessment);
         cv.put("severity_assessment", this.detectionProbabilityEstimate);
         cv.put("magnitude_of_risk", this.magnitudeOfRisk);
+        System.out.println(this.name);
+        System.out.println(this.riskTypeId);
+
         if (this.id == -1)
             db.insert("risks", null, cv);
         else

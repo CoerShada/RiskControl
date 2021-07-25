@@ -64,6 +64,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
 
                 if (l==riskTypes.length){
                     Intent intent = new Intent(SettingUpRiskActivity.this, SettingUpRiskTypeActivity.class);
+                    intent.putExtra("registry_id", currentRegistry.id);
                     startActivity(intent);
                 }
             }
@@ -132,6 +133,20 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         this.currentRisk = new Risk(id, this);
         if (this.currentRisk.id==-1) return;
 
+        TextView name = findViewById(R.id.textinput_risk_name);
+        name.setText(this.currentRisk.getName());
+
+        TextView magnitudeOfRisk = findViewById(R.id.magnitude_of_risk);
+        magnitudeOfRisk.setText((int) this.currentRisk.getMagnitudeOfRisk());
+
+        SeekBar seekBarProbabilityOfOccurrence= findViewById(R.id.seekbar_probability_of_occurrence);
+        SeekBar seekBarDetectionProbabilityEstimate= findViewById(R.id.seekbar_detection_probability_estimate);
+        SeekBar seekBarSeverityAssessment= findViewById(R.id.seekbar_severity_assessment);
+
+        seekBarProbabilityOfOccurrence.setProgress((int) this.currentRisk.getProbabilityOfOccurrence());
+        seekBarDetectionProbabilityEstimate.setProgress((int) this.currentRisk.getDetectionProbabilityEstimate());
+        seekBarSeverityAssessment.setProgress((int) this.currentRisk.getSeverityAssessment());
+
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
@@ -161,7 +176,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             }
             results[i].setTextColor(Color.rgb(red, green, 0));
 
-            results[i].setText(resultsDescription[i] + ": " + String.format("%.3f", (currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom()));
+            results[i].setText(resultsDescription[i] + ": " + (currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom());
 
         }
     }
@@ -177,6 +192,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             this.currentRisk.save(this);
             this.currentRegistry.addRisk(this);
             this.currentRegistry.save(this);
+
             startActivity(intent);
         }
     }

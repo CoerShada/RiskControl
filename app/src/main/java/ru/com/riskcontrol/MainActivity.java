@@ -60,13 +60,6 @@ public class MainActivity extends AppCompatActivity {
             date.setText(registries[i].getDateOfCreation());
             tableRow.addView(date, 0);
 
-            tableRow.setOnLongClickListener(v -> {
-                int id = v.getId();
-                Intent intent = new Intent(MainActivity.this, SettingUpRegistryActivity.class);
-                intent.putExtra("id", id);
-                startActivity(intent);
-                return true;
-            });
 
             tableRow.setOnClickListener(v -> {
                 int id = v.getId();
