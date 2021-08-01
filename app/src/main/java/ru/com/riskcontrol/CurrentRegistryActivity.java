@@ -90,16 +90,17 @@ public class CurrentRegistryActivity extends AppCompatActivity {
             tableRow.setOnClickListener(v -> {
                 int idRisk = v.getId();
                 Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-                intent.putExtra("id", idRisk);
+                intent.putExtra("registry_id", thisRegistry.id);
+                intent.putExtra("risk_id", idRisk);
                 startActivity(intent);
             });
 
             TextView priority = new TextView(this);
-            if(risks[i].getMagnitudeOfRisk()<33) {
+            if(risks[i].getMagnitudeOfRisk()<30) {
                 priority.setText("Незначительный");
                 priority.setTextColor(Color.rgb(0, 200, 0));
             }
-            else if(33<risks[i].getMagnitudeOfRisk() && risks[i].getMagnitudeOfRisk()<66) {
+            else if(risks[i].getMagnitudeOfRisk()<70) {
                 priority.setText("Умеренный");
                 priority.setTextColor(Color.rgb(150, 150, 0));
             }
