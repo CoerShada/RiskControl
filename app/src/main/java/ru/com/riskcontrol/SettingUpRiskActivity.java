@@ -152,20 +152,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     public void CalculateResults(){
         TextView result = findViewById(R.id.magnitude_of_risk);
-        String resultString = getApplicationContext().getString(R.string.magnitude_of_risk) + ": ";
-        resultString +=(currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom();
-        resultString+="\n";
-        resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
 
-        if (currentRisk.getMagnitudeOfRisk()<30){
-            resultString+=getApplicationContext().getString(R.string.low);
-        }
-        else if (currentRisk.getMagnitudeOfRisk()<70){
-            resultString+=getApplicationContext().getString(R.string.normal);
-        }
-        else{
-            resultString+=getApplicationContext().getString(R.string.high);
-        }
 
         //calculate magnitude of risk in scale from 0 to 100
         currentRisk.calculateMagnitudeOfRisk(currentRegistry.getModel()==0);
@@ -181,6 +168,21 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         } else {
             red = (int) (currentRisk.getMagnitudeOfRisk() * 5.1);
             green = 255;
+        }
+
+        String resultString = getApplicationContext().getString(R.string.magnitude_of_risk) + ": ";
+        resultString +=(currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom();
+        resultString+="\n";
+        resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
+
+        if (currentRisk.getMagnitudeOfRisk()<30){
+            resultString+=getApplicationContext().getString(R.string.low);
+        }
+        else if (currentRisk.getMagnitudeOfRisk()<70){
+            resultString+=getApplicationContext().getString(R.string.normal);
+        }
+        else{
+            resultString+=getApplicationContext().getString(R.string.high);
         }
 
 
