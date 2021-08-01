@@ -154,7 +154,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         TextView result = findViewById(R.id.magnitude_of_risk);
         String resultString = getApplicationContext().getString(R.string.magnitude_of_risk) + ": ";
         resultString +=(currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom();
-        resultString+=". ";
+        resultString+="\n";
         resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
 
         if (currentRisk.getMagnitudeOfRisk()<30){
