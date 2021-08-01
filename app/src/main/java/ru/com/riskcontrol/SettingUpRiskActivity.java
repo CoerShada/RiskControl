@@ -137,7 +137,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         name.setText(this.currentRisk.getName());
 
         TextView magnitudeOfRisk = findViewById(R.id.magnitude_of_risk);
-        magnitudeOfRisk.setText((int) this.currentRisk.getMagnitudeOfRisk());
+        //magnitudeOfRisk.setText((int) this.currentRisk.getMagnitudeOfRisk());
 
         SeekBar seekBarProbabilityOfOccurrence= findViewById(R.id.seekbar_probability_of_occurrence);
         SeekBar seekBarDetectionProbabilityEstimate= findViewById(R.id.seekbar_detection_probability_estimate);
