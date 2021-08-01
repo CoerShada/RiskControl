@@ -94,6 +94,7 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
                 do {
                     factories[index++] = new Factory(cursor.getInt(cursorId), this);
                 } while (cursor.moveToNext());
+
             }
             cursor.close();
         }
