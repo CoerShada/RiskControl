@@ -19,4 +19,7 @@
     <string name="assessment_of_the_likelihood_of_occurrence">Оценка вероятности возникновения</string>
     <string name="detection_probability_estimate">Оценка вероятности обнаружения</string>
     <string name="severity_assessment">Оценка тяжести последствий</string>
+    <string name="low">Низкая</string>
+    <string name="normal">Нормальная</string>
+    <string name="high">Высокая</string>
 </resources>

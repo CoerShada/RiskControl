@@ -151,34 +151,48 @@ public class SettingUpRiskActivity extends AppCompatActivity {
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     public void CalculateResults(){
-        TextView[] results = new TextView[]{findViewById(R.id.magnitude_of_risk),
-                findViewById(R.id.significance_of_risk),
-                findViewById(R.id.prioritizing_risk)};
+        TextView result = findViewById(R.id.magnitude_of_risk);
+        String resultString = getApplicationContext().getString(R.string.magnitude_of_risk) + ": ";
+        resultString +=(currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom();
+        resultString+=". ";
+        resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
 
-        String[] resultsDescription = new String[]{ getApplicationContext().getString(R.string.magnitude_of_risk),
-                getApplicationContext().getString(R.string.significance_of_risk),
-                getApplicationContext().getString(R.string.prioritizing_risk)};
+        if (currentRisk.getMagnitudeOfRisk()<30){
+            resultString+=getApplicationContext().getString(R.string.low);
+        }
+        else if (currentRisk.getMagnitudeOfRisk()<70){
+            resultString+=getApplicationContext().getString(R.string.normal);
+        }
+        else{
+            resultString+=getApplicationContext().getString(R.string.high);
+        }
 
         //calculate magnitude of risk in scale from 0 to 100
         currentRisk.calculateMagnitudeOfRisk(currentRegistry.getModel()==0);
 
         //output converted results for users
-        for (int i = 0; i<results.length; i++) {
-            int red;
-            int green;
 
-            if (currentRisk.getMagnitudeOfRisk() > 50) {
-                red = 255;
-                green = (int) (255 - (currentRisk.getMagnitudeOfRisk() * 5.1));
-            } else {
-                red = (int) (currentRisk.getMagnitudeOfRisk() * 5.1);
-                green = 255;
-            }
-            results[i].setTextColor(Color.rgb(red, green, 0));
+        int red;
+        int green;
 
-            results[i].setText(resultsDescription[i] + ": " + (currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom());
-
+        if (currentRisk.getMagnitudeOfRisk() > 50) {
+            red = 255;
+            green = (int) (255 - (currentRisk.getMagnitudeOfRisk() * 5.1));
+        } else {
+            red = (int) (currentRisk.getMagnitudeOfRisk() * 5.1);
+            green = 255;
         }
+
+
+
+
+
+
+        result.setTextColor(Color.rgb(red, green, 0));
+
+        result.setText(resultString);
+
+
     }
 
     public void onClickSave(View view){
