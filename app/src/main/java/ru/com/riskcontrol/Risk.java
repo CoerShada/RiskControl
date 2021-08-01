@@ -63,10 +63,12 @@ public class Risk {
     }
 
     public float getProbabilityOfOccurrence(){
+
         return this.probabilityOfOccurrence;
     }
 
     public float getDetectionProbabilityEstimate(){
+
         return this.detectionProbabilityEstimate;
     }
 
@@ -102,11 +104,9 @@ public class Risk {
         cv.put("name", this.name);
         cv.put("risk_type_id", this.riskTypeId);
         cv.put("probability_of_occurrence", this.probabilityOfOccurrence);
-        cv.put("detection_probability_estimate", this.severityAssessment);
-        cv.put("severity_assessment", this.detectionProbabilityEstimate);
+        cv.put("detection_probability_estimate", this.detectionProbabilityEstimate);
+        cv.put("severity_assessment", this.severityAssessment);
         cv.put("magnitude_of_risk", this.magnitudeOfRisk);
-        System.out.println(this.name);
-        System.out.println(this.riskTypeId);
 
         if (this.id == -1)
             db.insert("risks", null, cv);
