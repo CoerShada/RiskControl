@@ -19,7 +19,7 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
 
     private Registry currentRegistry;
     private Factory[] factories;
-    private final String[] modelsRatings = {"Двухфакторная", "Трехфакторная"};
+    private final String[] modelsRatings = {getApplicationContext().getString(R.string.twoWay), getApplicationContext().getString(R.string.threeWay)};
     DBHelper dpHelper = new DBHelper(this);
 
     @Override
@@ -31,7 +31,7 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
         String[] factoriesStrings = new String[factories.length+1];
         for (int i = 0; i<factories.length; i++)
             factoriesStrings[i] = factories[i].name;
-        factoriesStrings[factoriesStrings.length-1] = "Добавить";
+        factoriesStrings[factoriesStrings.length-1] = getApplicationContext().getString(R.string.add);
 
         setContentView(R.layout.activity_setting_up_registry);
 
@@ -73,16 +73,12 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
             }
         });
 
-
         if (factories.length<1){
             Intent intent = new Intent(SettingUpRegistryActivity.this, SettingUpFactoryActivity.class);
             startActivity(intent);
         }
 
-
         loadExtendsRegistry(getIntent().getIntExtra("id", -1));
-
-
     }
 
     private void loadFactories(){

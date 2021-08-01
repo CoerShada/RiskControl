@@ -59,7 +59,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         String[] riskTypesString = new String[riskTypes.length+1];
         for (int i = 0; i<riskTypes.length; i++)
             riskTypesString[i] = riskTypes[i].name;
-        riskTypesString[riskTypesString.length-1] = "Добавить";
+        riskTypesString[riskTypesString.length-1] = getApplicationContext().getString(R.string.add);
 
         Spinner spinnerRiskTypes = (Spinner) findViewById(R.id.spinner_risk_type);
         ArrayAdapter<String> adapterRiskTypes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, riskTypesString);
@@ -147,7 +147,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     private void loadRisk(int id){
         this.currentRisk = new Risk(id, currentRegistry,this);
         if (this.currentRisk.id==-1) return;
-        System.out.println("риск найден");
         TextView name = findViewById(R.id.textinput_risk_name);
         name.setText(this.currentRisk.getName());
 

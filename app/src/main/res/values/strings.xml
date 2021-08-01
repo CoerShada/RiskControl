@@ -22,4 +22,7 @@
     <string name="low">Низкая</string>
     <string name="normal">Нормальная</string>
     <string name="high">Высокая</string>
+    <string name="add">Добавить</string>
+    <string name="twoWay">Двухфакторная</string>
+    <string name="threeWay">Трехфакторная</string>
 </resources>
