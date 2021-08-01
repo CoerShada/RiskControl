@@ -145,7 +145,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     }
 
     private void loadRisk(int id){
-        this.currentRisk = new Risk(id, this);
+        this.currentRisk = new Risk(id, currentRegistry,this);
         if (this.currentRisk.id==-1) return;
         System.out.println("риск найден");
         TextView name = findViewById(R.id.textinput_risk_name);

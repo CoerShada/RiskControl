@@ -134,7 +134,7 @@ public class Registry {
                 cursor.moveToLast();
                 int cursorId= cursor.getColumnIndex("_id");
 
-                risk = new Risk(cursor.getInt(cursorId), context);
+                risk = new Risk(cursor.getInt(cursorId), this, context);
 
                 cursor.close();
             }

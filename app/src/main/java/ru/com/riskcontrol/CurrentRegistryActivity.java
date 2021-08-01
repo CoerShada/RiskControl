@@ -66,7 +66,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
             if (cursor.getCount()>0) {
                 do {
 
-                    risks[index] = new Risk(cursor.getInt(cursorId), this);
+                    risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
                     index++;
                 } while (cursor.moveToNext());
             }

@@ -15,9 +15,11 @@ public class Risk {
     private float detectionProbabilityEstimate = 0;
     private float severityAssessment = 0;
     private float magnitudeOfRisk = 0;
+    private Registry parentRegistry;
 
-    public Risk(int id, Context context){
+    public Risk(int id, Registry parentRegistry,Context context){
         this.id = id;
+        this.parentRegistry = parentRegistry;
         if (id==-1) return;
         DBHelper dpHelper = new DBHelper(context);
         SQLiteDatabase db = dpHelper.getReadableDatabase();
@@ -28,7 +30,7 @@ public class Risk {
             int cursorProbabilityOfOccurrence = cursor.getColumnIndex("probability_of_occurrence");
             int cursorDetectionProbabilityEstimate = cursor.getColumnIndex("detection_probability_estimate");
             int cursorSeverityAssessment= cursor.getColumnIndex("severity_assessment");
-            int cursorMagnitudeOfRisk= cursor.getColumnIndex("magnitude_of_risk");
+
             cursor.moveToFirst();
 
             this.name = cursor.getString(cursorName);
@@ -36,7 +38,7 @@ public class Risk {
             this.probabilityOfOccurrence = cursor.getFloat(cursorProbabilityOfOccurrence);
             this.detectionProbabilityEstimate = cursor.getFloat(cursorDetectionProbabilityEstimate);
             this.severityAssessment = cursor.getFloat(cursorSeverityAssessment);
-            this.magnitudeOfRisk = cursor.getFloat(cursorMagnitudeOfRisk);
+            this.calculateMagnitudeOfRisk(parentRegistry.getModel()==0);
 
             cursor.close();
         }
@@ -106,7 +108,6 @@ public class Risk {
         cv.put("probability_of_occurrence", this.probabilityOfOccurrence);
         cv.put("detection_probability_estimate", this.detectionProbabilityEstimate);
         cv.put("severity_assessment", this.severityAssessment);
-        cv.put("magnitude_of_risk", this.magnitudeOfRisk);
 
         if (this.id == -1)
             db.insert("risks", null, cv);
