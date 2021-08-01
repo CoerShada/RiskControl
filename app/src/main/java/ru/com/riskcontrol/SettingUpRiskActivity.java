@@ -85,7 +85,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
                 currentRisk.setProbabilityOfOccurrence(seekBarProbabilityOfOccurrence.getProgress());
                 TextView textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
                 textViewProbabilityOfOccurrenceValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
-                CalculateResults();
+                calculateResults();
             }
 
             @Override
@@ -101,7 +101,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
                 currentRisk.setDetectionProbabilityEstimate(seekBarDetectionProbabilityEstimate.getProgress());
                 TextView textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
                 textViewDetectionProbabilityEstimateValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
-                CalculateResults();
+                calculateResults();
             }
 
             @Override
@@ -117,7 +117,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
                 currentRisk.setSeverityAssessment(seekBarSeverityAssessment.getProgress());
                 TextView textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
                 textViewSeverityAssessmentValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
-                CalculateResults();
+                calculateResults();
             }
 
             @Override
@@ -126,7 +126,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-        CalculateResults();
+        calculateResults();
     }
 
     private void loadRisk(int id){
@@ -156,10 +156,11 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         seekBarDetectionProbabilityEstimate.setProgress((int) this.currentRisk.getDetectionProbabilityEstimate());
         seekBarSeverityAssessment.setProgress((int) this.currentRisk.getSeverityAssessment());
 
+        calculateResults();
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    public void CalculateResults(){
+    private void calculateResults(){
         TextView result = findViewById(R.id.magnitude_of_risk);
 
 
