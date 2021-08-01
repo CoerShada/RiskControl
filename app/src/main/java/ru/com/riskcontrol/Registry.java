@@ -68,7 +68,9 @@ public class Registry {
         }
     }
 
-
+    public float getTransformedResults(float number){
+        return (this.to - this.from) / 100 * number + this.from;
+    }
 
 
     public String getDateOfCreation(){

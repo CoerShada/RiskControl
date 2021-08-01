@@ -84,7 +84,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentRisk.setProbabilityOfOccurrence(seekBarProbabilityOfOccurrence.getProgress());
                 TextView textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
-                textViewProbabilityOfOccurrenceValue.setText(String.valueOf((currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * progress + currentRegistry.getFrom()));
+                textViewProbabilityOfOccurrenceValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
                 CalculateResults();
             }
 
@@ -100,7 +100,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentRisk.setDetectionProbabilityEstimate(seekBarDetectionProbabilityEstimate.getProgress());
                 TextView textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
-                textViewDetectionProbabilityEstimateValue.setText(String.valueOf((currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * progress + currentRegistry.getFrom()));
+                textViewDetectionProbabilityEstimateValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
                 CalculateResults();
             }
 
@@ -116,7 +116,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentRisk.setSeverityAssessment(seekBarSeverityAssessment.getProgress());
                 TextView textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
-                textViewSeverityAssessmentValue.setText(String.valueOf((currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * progress + currentRegistry.getFrom()));
+                textViewSeverityAssessmentValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
                 CalculateResults();
             }
 
@@ -126,7 +126,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-
+        CalculateResults();
     }
 
     private void loadRisk(int id){
@@ -137,11 +137,20 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         name.setText(this.currentRisk.getName());
 
         TextView magnitudeOfRisk = findViewById(R.id.magnitude_of_risk);
-        //magnitudeOfRisk.setText((int) this.currentRisk.getMagnitudeOfRisk());
+        //magnitudeOfRisk.setText( this.currentRisk.getMagnitudeOfRisk());
 
         SeekBar seekBarProbabilityOfOccurrence= findViewById(R.id.seekbar_probability_of_occurrence);
+        TextView textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
+        textViewProbabilityOfOccurrenceValue.setText(String.valueOf(currentRegistry.getTransformedResults(currentRisk.getProbabilityOfOccurrence())));
+
+
         SeekBar seekBarDetectionProbabilityEstimate= findViewById(R.id.seekbar_detection_probability_estimate);
+        TextView textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
+        textViewDetectionProbabilityEstimateValue.setText(String.valueOf(currentRegistry.getTransformedResults(currentRegistry.getTransformedResults(currentRisk.getDetectionProbabilityEstimate()))));
+
         SeekBar seekBarSeverityAssessment= findViewById(R.id.seekbar_severity_assessment);
+        TextView textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
+        textViewSeverityAssessmentValue.setText(String.valueOf(currentRegistry.getTransformedResults(currentRisk.getSeverityAssessment())));
 
         seekBarProbabilityOfOccurrence.setProgress((int) this.currentRisk.getProbabilityOfOccurrence());
         seekBarDetectionProbabilityEstimate.setProgress((int) this.currentRisk.getDetectionProbabilityEstimate());
@@ -171,7 +180,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         }
 
         String resultString = getApplicationContext().getString(R.string.magnitude_of_risk) + ": ";
-        resultString +=(currentRegistry.getTo() - currentRegistry.getFrom()) / 100 * currentRisk.getMagnitudeOfRisk() + currentRegistry.getFrom();
+        resultString +=(currentRegistry.getTransformedResults(currentRisk.getMagnitudeOfRisk()));
         resultString+="\n";
         resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
 
