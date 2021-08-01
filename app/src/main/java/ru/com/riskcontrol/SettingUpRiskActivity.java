@@ -132,7 +132,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     private void loadRisk(int id){
         this.currentRisk = new Risk(id, this);
         if (this.currentRisk.id==-1) return;
-
+        System.out.println("риск найден");
         TextView name = findViewById(R.id.textinput_risk_name);
         name.setText(this.currentRisk.getName());
 
@@ -175,20 +175,12 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         resultString+="\n";
         resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
 
-        if (currentRisk.getMagnitudeOfRisk()<30){
+        if (currentRisk.getMagnitudeOfRisk()<30)
             resultString+=getApplicationContext().getString(R.string.low);
-        }
-        else if (currentRisk.getMagnitudeOfRisk()<70){
+        else if (currentRisk.getMagnitudeOfRisk()<70)
             resultString+=getApplicationContext().getString(R.string.normal);
-        }
-        else{
+        else
             resultString+=getApplicationContext().getString(R.string.high);
-        }
-
-
-
-
-
 
         result.setTextColor(Color.rgb(red, green, 0));
 
