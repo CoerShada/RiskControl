@@ -23,6 +23,13 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     Risk currentRisk;
     DBHelper dpHelper = new DBHelper(this);
 
+    SeekBar seekBarDetectionProbabilityEstimate;
+    TextView textViewDetectionProbabilityEstimateValue;
+    SeekBar seekBarProbabilityOfOccurrence;
+    TextView textViewProbabilityOfOccurrenceValue;
+    SeekBar seekBarSeverityAssessment;
+    TextView textViewSeverityAssessmentValue;
+    TextView result;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -33,6 +40,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         int registry_id = getIntent().getIntExtra("registry_id", -1);
         int risk_id = getIntent().getIntExtra("risk_id", -1);
         currentRegistry = new Registry(registry_id, this);
+        loadViews();
         loadRisk(risk_id);
 
         Cursor cursor = db.query("risk_types", null, null,null,null,null,null);
@@ -83,7 +91,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentRisk.setProbabilityOfOccurrence(seekBarProbabilityOfOccurrence.getProgress());
-                TextView textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
                 textViewProbabilityOfOccurrenceValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
                 calculateResults();
             }
@@ -99,7 +106,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentRisk.setDetectionProbabilityEstimate(seekBarDetectionProbabilityEstimate.getProgress());
-                TextView textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
                 textViewDetectionProbabilityEstimateValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
                 calculateResults();
             }
@@ -115,7 +121,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentRisk.setSeverityAssessment(seekBarSeverityAssessment.getProgress());
-                TextView textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
                 textViewSeverityAssessmentValue.setText(String.valueOf(currentRegistry.getTransformedResults(progress)));
                 calculateResults();
             }
@@ -129,6 +134,16 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         calculateResults();
     }
 
+    private void loadViews(){
+        this.seekBarDetectionProbabilityEstimate= findViewById(R.id.seekbar_detection_probability_estimate);
+        this.textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
+        this.seekBarProbabilityOfOccurrence= findViewById(R.id.seekbar_probability_of_occurrence);
+        this.textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
+        this.seekBarSeverityAssessment= findViewById(R.id.seekbar_severity_assessment);
+        this.textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
+        this.result = findViewById(R.id.magnitude_of_risk);
+    }
+
     private void loadRisk(int id){
         this.currentRisk = new Risk(id, this);
         if (this.currentRisk.id==-1) return;
@@ -136,21 +151,14 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         TextView name = findViewById(R.id.textinput_risk_name);
         name.setText(this.currentRisk.getName());
 
-        TextView magnitudeOfRisk = findViewById(R.id.magnitude_of_risk);
-        //magnitudeOfRisk.setText( this.currentRisk.getMagnitudeOfRisk());
 
-        SeekBar seekBarProbabilityOfOccurrence= findViewById(R.id.seekbar_probability_of_occurrence);
-        TextView textViewProbabilityOfOccurrenceValue = findViewById(R.id.textview_probability_of_occurrence_value);
-        textViewProbabilityOfOccurrenceValue.setText(String.valueOf(currentRegistry.getTransformedResults(currentRisk.getProbabilityOfOccurrence())));
+        float probabilityOfOccurrence = currentRegistry.getTransformedResults(currentRisk.getProbabilityOfOccurrence());
+        float detectionProbabilityEstimate = currentRegistry.getTransformedResults(currentRegistry.getTransformedResults(currentRisk.getDetectionProbabilityEstimate()));
+        float severityAssessment = currentRegistry.getTransformedResults(currentRisk.getSeverityAssessment());
 
-
-        SeekBar seekBarDetectionProbabilityEstimate= findViewById(R.id.seekbar_detection_probability_estimate);
-        TextView textViewDetectionProbabilityEstimateValue = findViewById(R.id.textview_detection_probability_estimate_value);
-        textViewDetectionProbabilityEstimateValue.setText(String.valueOf(currentRegistry.getTransformedResults(currentRegistry.getTransformedResults(currentRisk.getDetectionProbabilityEstimate()))));
-
-        SeekBar seekBarSeverityAssessment= findViewById(R.id.seekbar_severity_assessment);
-        TextView textViewSeverityAssessmentValue = findViewById(R.id.textview_severity_assessment_value);
-        textViewSeverityAssessmentValue.setText(String.valueOf(currentRegistry.getTransformedResults(currentRisk.getSeverityAssessment())));
+        textViewProbabilityOfOccurrenceValue.setText(String.valueOf(probabilityOfOccurrence));
+        textViewDetectionProbabilityEstimateValue.setText(String.valueOf(detectionProbabilityEstimate));
+        textViewSeverityAssessmentValue.setText(String.valueOf(severityAssessment));
 
         seekBarProbabilityOfOccurrence.setProgress((int) this.currentRisk.getProbabilityOfOccurrence());
         seekBarDetectionProbabilityEstimate.setProgress((int) this.currentRisk.getDetectionProbabilityEstimate());
@@ -161,8 +169,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     private void calculateResults(){
-        TextView result = findViewById(R.id.magnitude_of_risk);
-
 
         //calculate magnitude of risk in scale from 0 to 100
         currentRisk.calculateMagnitudeOfRisk(currentRegistry.getModel()==0);
