@@ -58,65 +58,63 @@ public class CurrentRegistryActivity extends AppCompatActivity {
         List<Integer> risksIds = thisRegistry.getRisksIds();
 
 
-            Cursor cursor = db.query("risks", null, null, null, null, null, null);
-            {
-                System.out.println(cursor.getCount());
-                if (cursor.getCount() == 0) return;
-                this.risks = new Risk[cursor.getCount()];
+        Cursor cursor = db.query("risks", null, null, null, null, null, null);
+        {
+            if (cursor.getCount() == 0) return;
+            this.risks = new Risk[cursor.getCount()];
 
-                cursor.moveToFirst();
-                int index = 0;
-                int cursorId = cursor.getColumnIndex("_id");
-                if (cursor.getCount() > 0) {
-                    do {
-                        if (!risksIds.contains(cursor.getInt(cursorId))) continue;
-                        risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
-                        index++;
-                    } while (cursor.moveToNext());
-                }
-                rows = index;
-                cursor.close();
+            cursor.moveToFirst();
+            int index = 0;
+            int cursorId = cursor.getColumnIndex("_id");
+            if (cursor.getCount() > 0) {
+                do {
+                    if (!risksIds.contains(cursor.getInt(cursorId))) continue;
+                    risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
+                    index++;
+                } while (cursor.moveToNext());
             }
+            rows = index;
+            cursor.close();
+        }
 
 
-            for (int i = 0; i < rows; i++) {
-                TableRow tableRow = new TableRow(this);
-                tableRow.setLayoutParams(new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.WRAP_CONTENT
-                ));
-                tableRow.setId(risks[i].id);
+        for (int i = 0; i < rows; i++) {
+            TableRow tableRow = new TableRow(this);
+            tableRow.setLayoutParams(new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.WRAP_CONTENT
+            ));
+            tableRow.setId(risks[i].id);
 
-                TextView name = new TextView(this);
-                name.setText(risks[i].getName());
-                tableRow.addView(name, 0);
-
-
-                tableRow.setOnClickListener(v -> {
-                    int idRisk = v.getId();
-                    Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-                    intent.putExtra("registryId", thisRegistry.id);
-                    intent.putExtra("riskId", idRisk);
-                    intent.putExtra("isLast", idRisk == risks[risks.length - 1].id);
-                    startActivity(intent);
-                });
-
-                TextView priority = new TextView(this);
-                if (risks[i].getMagnitudeOfRisk() < 30) {
-                    priority.setText("Незначительный");
-                    priority.setTextColor(Color.rgb(0, 200, 0));
-                } else if (risks[i].getMagnitudeOfRisk() < 70) {
-                    priority.setText("Умеренный");
-                    priority.setTextColor(Color.rgb(150, 150, 0));
-                } else {
-                    priority.setText("Выокий");
-                    priority.setTextColor(Color.rgb(200, 0, 0));
-                }
-                tableRow.addView(priority, 1);
+            TextView name = new TextView(this);
+            name.setText(risks[i].getName());
+            tableRow.addView(name, 0);
 
 
-                table_risks.addView(tableRow, i);
+            tableRow.setOnClickListener(v -> {
+                int idRisk = v.getId();
+                Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
+                intent.putExtra("registryId", thisRegistry.id);
+                intent.putExtra("riskId", idRisk);
+                intent.putExtra("isLast", idRisk == risks[risks.length - 1].id);
+                startActivity(intent);
+            });
+
+            TextView priority = new TextView(this);
+            if (risks[i].getMagnitudeOfRisk() < 30) {
+                priority.setText("Незначительный");
+                priority.setTextColor(Color.rgb(0, 200, 0));
+            } else if (risks[i].getMagnitudeOfRisk() < 70) {
+                priority.setText("Умеренный");
+                priority.setTextColor(Color.rgb(150, 150, 0));
+            } else {
+                priority.setText("Выокий");
+                priority.setTextColor(Color.rgb(200, 0, 0));
             }
+            tableRow.addView(priority, 1);
+
+            table_risks.addView(tableRow, i);
+        }
 
     }
 
