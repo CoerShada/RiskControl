@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -158,7 +157,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         this.result = findViewById(R.id.magnitude_of_risk);
 
         if (isLast) return;
-        seekBarSeverityAssessment.setClickable(false);
+        //Дописать!
 
     }
 
@@ -206,7 +205,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         }
 
         String resultString = getApplicationContext().getString(R.string.magnitude_of_risk) + ": ";
-        resultString +=(currentRegistry.getTransformedResults(currentRisk.getMagnitudeOfRisk()));
+        resultString +=(Math.round(currentRisk.getMagnitudeOfRisk()));
         resultString+="\n";
         resultString += getApplicationContext().getString(R.string.prioritizing_risk)+": " ;
 

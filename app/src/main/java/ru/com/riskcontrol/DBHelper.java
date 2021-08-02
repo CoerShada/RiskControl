@@ -21,6 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table registries (_id integer primary key, factory_id integer, risks_ids text, model integer,scale text, date_of_creation text)");
         db.execSQL("create table risks (_id integer primary key, name text, risk_type_id integer, probability_of_occurrence real, detection_probability_estimate real, severity_assessment real, date_of_creation text)");
         db.execSQL("create table risk_types (_id integer primary key, name text, value integer)");
+        db.execSQL("create table minimization_measure (_id integer primary key, name text, responsible text, date text)");
     }
 
     @Override
@@ -29,7 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists registries");
         db.execSQL("drop table if exists risks");
         db.execSQL("drop table if exists risk_types");
-
+        db.execSQL("drop table if exists minimization_measure");
         this.onCreate(db);
     }
 }
