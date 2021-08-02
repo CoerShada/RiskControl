@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 18;
     private static final String DATABASE_NAME="db_main";
 
     public DBHelper(@Nullable Context context) {

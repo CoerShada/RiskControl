@@ -19,7 +19,6 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
 
     private Registry currentRegistry;
     private Factory[] factories;
-    private final String[] modelsRatings = {getApplicationContext().getString(R.string.twoWay), getApplicationContext().getString(R.string.threeWay)};
     DBHelper dpHelper = new DBHelper(this);
 
     @Override
@@ -28,6 +27,7 @@ public class SettingUpRegistryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         loadFactories();
+        String[] modelsRatings = {getApplicationContext().getString(R.string.twoWay), getApplicationContext().getString(R.string.threeWay)};
         String[] factoriesStrings = new String[factories.length+1];
         for (int i = 0; i<factories.length; i++)
             factoriesStrings[i] = factories[i].name;
