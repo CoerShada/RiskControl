@@ -1,9 +1,14 @@
 package ru.com.riskcontrol;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class Risk {
@@ -16,11 +21,19 @@ public class Risk {
     private float severityAssessment = 0;
     private float magnitudeOfRisk = 0;
     private Registry parentRegistry;
+    private String dateOfCreation;
 
     public Risk(int id, Registry parentRegistry,Context context){
         this.id = id;
         this.parentRegistry = parentRegistry;
-        if (id==-1) return;
+        if (id==-1){
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, 1);
+            Date date = cal.getTime();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
+            this.dateOfCreation = format1.format(date);
+            return;
+        }
         DBHelper dpHelper = new DBHelper(context);
         SQLiteDatabase db = dpHelper.getReadableDatabase();
         Cursor cursor = db.query("risks", null, "_id=?", new String[]{String.valueOf(id)},null,null,null);
@@ -30,6 +43,7 @@ public class Risk {
             int cursorProbabilityOfOccurrence = cursor.getColumnIndex("probability_of_occurrence");
             int cursorDetectionProbabilityEstimate = cursor.getColumnIndex("detection_probability_estimate");
             int cursorSeverityAssessment= cursor.getColumnIndex("severity_assessment");
+            int cursorDate= cursor.getColumnIndex("date_of_creation");
 
             cursor.moveToFirst();
 
@@ -39,13 +53,21 @@ public class Risk {
             this.detectionProbabilityEstimate = cursor.getFloat(cursorDetectionProbabilityEstimate);
             this.severityAssessment = cursor.getFloat(cursorSeverityAssessment);
             this.calculateMagnitudeOfRisk(parentRegistry.getModel()==0);
-
+            this.dateOfCreation = cursor.getString(cursorDate);
             cursor.close();
         }
     }
 
     public void setName(String name){
         this.name = name;
+    }
+
+    public Registry getParentRegistry(){
+        return parentRegistry;
+    }
+
+    public String getDateOfCreation(){
+        return dateOfCreation;
     }
 
     public String getName(){
@@ -108,6 +130,7 @@ public class Risk {
         cv.put("probability_of_occurrence", this.probabilityOfOccurrence);
         cv.put("detection_probability_estimate", this.detectionProbabilityEstimate);
         cv.put("severity_assessment", this.severityAssessment);
+        cv.put("date_of_creation", this.dateOfCreation);
 
         if (this.id == -1)
             db.insert("risks", null, cv);

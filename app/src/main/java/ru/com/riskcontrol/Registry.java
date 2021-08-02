@@ -16,7 +16,7 @@ public class Registry {
 
 
     public final int id;
-    private String dateOfCreation;
+    private final String dateOfCreation;
     private int factoryId;
     private ArrayList<Integer> risksIds;
     private float from;
@@ -41,7 +41,7 @@ public class Registry {
         {
 
             int cursorDateOfCreation = cursor.getColumnIndex("date_of_creation");
-            //int cursorRisksIds = cursor.getColumnIndex("risks_ids");
+            int cursorRisksIds = cursor.getColumnIndex("risks_ids");
             int cursorModels = cursor.getColumnIndex("model");
             int cursorScale = cursor.getColumnIndex("scale");
             int cursorFactory = cursor.getColumnIndex("factory_id");
@@ -51,13 +51,14 @@ public class Registry {
             this.factoryId = cursor.getInt(cursorFactory);
             this.model = cursor.getShort(cursorModels);
             risksIds = new ArrayList<>();
-            /*if (!cursor.getString(cursorRisksIds).equals("")) {
+            if (!cursor.getString(cursorRisksIds).equals("")) {
+
                 String[] risksIdsBuf = cursor.getString(cursorRisksIds).split(",");
 
                 for (String s : risksIdsBuf) {
                     this.risksIds.add(Integer.parseInt(s));
                 }
-            }*/
+            }
 
 
             this.from = Float.parseFloat(cursor.getString(cursorScale).substring(0, cursor.getString(cursorScale).indexOf("/")));
@@ -120,6 +121,15 @@ public class Registry {
     }
 
     public List<Integer> getRisksIds(){
+        return risksIds;
+    }
+
+    public String[] getRisksIdsArrayString(){
+        String[] risksIds = new String[this.risksIds.size()];
+        for (int i = 0; i<this.risksIds.size(); i++) {
+            risksIds[i] = String.valueOf(this.risksIds.get(i));
+        }
+
         return risksIds;
     }
 

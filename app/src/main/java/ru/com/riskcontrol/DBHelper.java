@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
     private static final String DATABASE_NAME="db_main";
 
     public DBHelper(@Nullable Context context) {
@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table factories (_id integer primary key, name text, description text)");
         db.execSQL("create table registries (_id integer primary key, factory_id integer, risks_ids text, model integer,scale text, date_of_creation text)");
-        db.execSQL("create table risks (_id integer primary key, name text, risk_type_id integer, probability_of_occurrence real, detection_probability_estimate real, severity_assessment real)");
+        db.execSQL("create table risks (_id integer primary key, name text, risk_type_id integer, probability_of_occurrence real, detection_probability_estimate real, severity_assessment real, date_of_creation text)");
         db.execSQL("create table risk_types (_id integer primary key, name text, value integer)");
     }
 

@@ -24,8 +24,8 @@ public class CurrentRegistryActivity extends AppCompatActivity {
 
         int id = getIntent().getIntExtra("id", -1);
         SQLiteDatabase db = dpHelper.getReadableDatabase();
-        if (id!=-1){
-            Cursor cursor = db.query("registries", null, "_id=?",new String[]{String.valueOf(id)},null,null,null);
+        if (id != -1) {
+            Cursor cursor = db.query("registries", null, "_id=?", new String[]{String.valueOf(id)}, null, null, null);
             {
                 cursor.moveToFirst();
                 int cursorId = cursor.getColumnIndex("_id");
@@ -34,9 +34,8 @@ public class CurrentRegistryActivity extends AppCompatActivity {
                 thisRegistry = new Registry(cursor.getInt(cursorId), this);
                 cursor.close();
             }
-        }
-        else{
-            Cursor cursor = db.query("registries", null, null,null, null,null,null);
+        } else {
+            Cursor cursor = db.query("registries", null, null, null, null, null, null);
             {
                 cursor.moveToLast();
                 int cursorId = cursor.getColumnIndex("_id");
@@ -54,70 +53,77 @@ public class CurrentRegistryActivity extends AppCompatActivity {
         table_risks = findViewById(R.id.table_risks);
         table_risks.setColumnShrinkable(0, true);
         int rows;
+        System.out.println(thisRegistry.getRisksIds());
+        try {
 
-        Cursor cursor = db.query("risks", null, null,null,null,null,null);
-        {
-            if (cursor.getCount()==0) return;
-            this.risks = new Risk[cursor.getCount()];
+            Cursor cursor = db.query("risks", null, "_id=?", thisRegistry.getRisksIdsArrayString(), null, null, null);
+            {
+                if (cursor.getCount() == 0) return;
+                this.risks = new Risk[cursor.getCount()];
 
-            cursor.moveToFirst();
-            int index = 0;
-            int cursorId= cursor.getColumnIndex("_id");
-            if (cursor.getCount()>0) {
-                do {
+                cursor.moveToFirst();
+                int index = 0;
+                int cursorId = cursor.getColumnIndex("_id");
+                if (cursor.getCount() > 0) {
+                    do {
 
-                    risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
-                    index++;
-                } while (cursor.moveToNext());
+                        risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
+                        index++;
+                    } while (cursor.moveToNext());
+                }
+                rows = index;
+                cursor.close();
             }
-            rows = index;
-            cursor.close();
+
+
+            for (int i = 0; i < rows; i++) {
+                TableRow tableRow = new TableRow(this);
+                tableRow.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                ));
+                tableRow.setId(risks[i].id);
+
+                TextView name = new TextView(this);
+                name.setText(risks[i].getName());
+                tableRow.addView(name, 0);
+
+
+                tableRow.setOnClickListener(v -> {
+                    int idRisk = v.getId();
+                    Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
+                    intent.putExtra("registryId", thisRegistry.id);
+                    intent.putExtra("riskId", idRisk);
+                    intent.putExtra("isLast", idRisk == risks[risks.length - 1].id);
+                    startActivity(intent);
+                });
+
+                TextView priority = new TextView(this);
+                if (risks[i].getMagnitudeOfRisk() < 30) {
+                    priority.setText("Незначительный");
+                    priority.setTextColor(Color.rgb(0, 200, 0));
+                } else if (risks[i].getMagnitudeOfRisk() < 70) {
+                    priority.setText("Умеренный");
+                    priority.setTextColor(Color.rgb(150, 150, 0));
+                } else {
+                    priority.setText("Выокий");
+                    priority.setTextColor(Color.rgb(200, 0, 0));
+                }
+                tableRow.addView(priority, 1);
+
+
+                table_risks.addView(tableRow, i);
+            }
         }
-
-        for (int i = 0; i<rows; i++){
-            TableRow tableRow = new TableRow(this);
-            tableRow.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            ));
-            tableRow.setId(risks[i].id);
-
-            TextView name = new TextView(this);
-            name.setText(risks[i].getName());
-            tableRow.addView(name, 0);
-
-
-            tableRow.setOnClickListener(v -> {
-                int idRisk = v.getId();
-                Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-                intent.putExtra("registry_id", thisRegistry.id);
-                intent.putExtra("risk_id", idRisk);
-                startActivity(intent);
-            });
-
-            TextView priority = new TextView(this);
-            if(risks[i].getMagnitudeOfRisk()<30) {
-                priority.setText("Незначительный");
-                priority.setTextColor(Color.rgb(0, 200, 0));
-            }
-            else if(risks[i].getMagnitudeOfRisk()<70) {
-                priority.setText("Умеренный");
-                priority.setTextColor(Color.rgb(150, 150, 0));
-            }
-            else{
-                priority.setText("Выокий");
-                priority.setTextColor(Color.rgb(200, 0, 0));
-            }
-            tableRow.addView(priority, 1);
-
-
-            table_risks.addView(tableRow, i);
+        catch (Exception e){
+            System.err.println(e);
         }
     }
 
     public void buttonAddOnClick(View view){
         Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-        intent.putExtra("registry_id", thisRegistry.id);
+        intent.putExtra("registryId", thisRegistry.id);
+        intent.putExtra("isLast", true);
         startActivity(intent);
     }
 }
