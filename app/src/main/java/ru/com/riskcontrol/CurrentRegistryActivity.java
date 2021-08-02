@@ -12,6 +12,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class CurrentRegistryActivity extends AppCompatActivity {
 
     Registry thisRegistry;
@@ -53,11 +55,12 @@ public class CurrentRegistryActivity extends AppCompatActivity {
         table_risks = findViewById(R.id.table_risks);
         table_risks.setColumnShrinkable(0, true);
         int rows;
-        System.out.println(thisRegistry.getRisksIds());
-        try {
+        List<Integer> risksIds = thisRegistry.getRisksIds();
 
-            Cursor cursor = db.query("risks", null, "_id=?", thisRegistry.getRisksIdsArrayString(), null, null, null);
+
+            Cursor cursor = db.query("risks", null, null, null, null, null, null);
             {
+                System.out.println(cursor.getCount());
                 if (cursor.getCount() == 0) return;
                 this.risks = new Risk[cursor.getCount()];
 
@@ -66,7 +69,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
                 int cursorId = cursor.getColumnIndex("_id");
                 if (cursor.getCount() > 0) {
                     do {
-
+                        if (!risksIds.contains(cursor.getInt(cursorId))) continue;
                         risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
                         index++;
                     } while (cursor.moveToNext());
@@ -114,10 +117,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
 
                 table_risks.addView(tableRow, i);
             }
-        }
-        catch (Exception e){
-            System.err.println(e);
-        }
+
     }
 
     public void buttonAddOnClick(View view){
