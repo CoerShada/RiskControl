@@ -45,12 +45,10 @@ public class SettingUpRiskTypeActivity extends AppCompatActivity {
         EditText value = findViewById(R.id.textview_risk_type_value);
 
         if (name.getText().toString().trim().length()!=0 && value.getText().toString().trim().length()!=0){
-            SQLiteDatabase db = dpHelper.getWritableDatabase();
+            currentRiskType.name = name.getText().toString();
+            currentRiskType.value = Integer.parseInt(value.getText().toString());
+            currentRiskType.save(this);
 
-            ContentValues cv = new ContentValues();
-            cv.put("name", name.getText().toString());
-            cv.put("value", value.getText().toString());
-            db.insert("risk_types", null , cv);
         }
         startActivity(intent);
     }

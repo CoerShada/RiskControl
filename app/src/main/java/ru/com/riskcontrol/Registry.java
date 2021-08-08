@@ -197,7 +197,7 @@ public class Registry {
         cv.put("scale", this.from + "/" + this.to);
 
         if (this.id == -1){
-            System.out.println(db.insert("registries", null, cv));
+            db.insert("registries", null, cv);
         }
         else
             db.update("registries", cv, "_id = ?", new String[]{String.valueOf(id)});
