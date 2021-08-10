@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.com.riskcontrol">
+    package="ru.com.riskcontrol" >
 
     <application
         android:allowBackup="true"
@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RiskControl">
+        android:theme="@style/Theme.RiskControl" >
         <activity
             android:name=".SettingUpMinimizationMeasure"
             android:exported="true" />
@@ -17,7 +17,7 @@
         <activity android:name=".SettingUpFactoryActivity" />
         <activity android:name=".CurrentRegistryActivity" />
         <activity android:name=".SettingUpRegistryActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

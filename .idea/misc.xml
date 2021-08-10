@@ -4,7 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_factory.xml" value="0.20520833333333333" />
-        <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_minimization_measure.xml" value="0.20520833333333333" />
+        <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_minimization_measure.xml" value="0.1" />
+        <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_registry.xml" value="0.2015625" />
         <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_risk.xml" value="0.20520833333333333" />
       </map>
     </option>

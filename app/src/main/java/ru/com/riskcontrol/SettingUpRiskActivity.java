@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -236,5 +237,11 @@ public class SettingUpRiskActivity extends AppCompatActivity {
 
             startActivity(intent);
         }
+    }
+
+    public void onClickAddMinimizationMeasure(View view){
+        Intent intent = new Intent(SettingUpRiskActivity.this, SettingUpMinimizationMeasure.class);
+        intent.putExtra("riskId", true);
+        startActivity(intent);
     }
 }

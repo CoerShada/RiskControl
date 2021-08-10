@@ -10,6 +10,7 @@
     <string name="back">Назад</string>
     <string name="name">Название</string>
     <string name="value">Значение</string>
+    <string name="responsible">Ответственный</string>
     <string name="description">Описание</string>
     <string name="risk_type">Тип риска</string>
     <string name="risk_name">Наименование риска</string>
