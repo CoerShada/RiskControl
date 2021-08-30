@@ -18,7 +18,6 @@ public class Registry {
     public final int id;
     private final String dateOfCreation;
     private int factoryId;
-    private ArrayList<Integer> risksIds;
     private float from;
     private float to;
     private short model;
@@ -50,15 +49,6 @@ public class Registry {
             this.dateOfCreation = cursor.getString(cursorDateOfCreation);
             this.factoryId = cursor.getInt(cursorFactory);
             this.model = cursor.getShort(cursorModels);
-            risksIds = new ArrayList<>();
-            if (!cursor.getString(cursorRisksIds).equals("")) {
-
-                String[] risksIdsBuf = cursor.getString(cursorRisksIds).split(",");
-
-                for (String s : risksIdsBuf) {
-                    this.risksIds.add(Integer.parseInt(s));
-                }
-            }
 
 
             this.from = Float.parseFloat(cursor.getString(cursorScale).substring(0, cursor.getString(cursorScale).indexOf("/")));
@@ -120,39 +110,7 @@ public class Registry {
         }
     }
 
-    public List<Integer> getRisksIds(){
-        return risksIds;
-    }
 
-    public String[] getRisksIdsArrayString(){
-        String[] risksIds = new String[this.risksIds.size()];
-        for (int i = 0; i<this.risksIds.size(); i++) {
-            risksIds[i] = String.valueOf(this.risksIds.get(i));
-        }
-
-        return risksIds;
-    }
-
-    public void addRisk(Context context){
-        if (canUpdate()){
-            Risk risk;
-            DBHelper dpHelper = new DBHelper(context);
-            SQLiteDatabase db = dpHelper.getReadableDatabase();
-            Cursor cursor = db.query("risks", null, null,null,null,null,null);
-            {
-                if (cursor.getCount()==0) return;
-                cursor.moveToLast();
-                int cursorId= cursor.getColumnIndex("_id");
-
-                risk = new Risk(cursor.getInt(cursorId), this, context);
-
-                cursor.close();
-            }
-
-
-            this.risksIds.add(risk.id);
-        }
-    }
 
     public boolean canUpdate(){
         return true;
@@ -184,16 +142,6 @@ public class Registry {
         cv.put("model", this.model);
         cv.put("date_of_creation", this.dateOfCreation);
 
-        StringBuilder risksIdsString = new StringBuilder();
-        if (risksIds!=null && risksIds.size() > 0) {
-            for (int item : risksIds) {
-                risksIdsString.append(item).append(",");
-            }
-            risksIdsString = new StringBuilder(risksIdsString.substring(0, risksIdsString.length() - 1));
-        }
-
-
-        cv.put("risks_ids", String.valueOf(risksIdsString));
         cv.put("scale", this.from + "/" + this.to);
 
         if (this.id == -1){

@@ -14,16 +14,20 @@
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
-        <EditText
-            android:id="@+id/editTextTextPersonName"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/name"
-            />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextMinimizationMeasureName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <EditText
-            android:id="@+id/editTextTextPersonName2"
+            android:id="@+id/editTextMinimizationMeasureResponsible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -32,13 +36,14 @@
             android:hint="@string/responsible" />
 
         <EditText
-            android:id="@+id/editTextDate"
+            android:id="@+id/editTextMinimizationMeasureDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="date"
             android:minHeight="48dp"
-            tools:ignore="SpeakableTextPresentCheck" />
+            tools:ignore="SpeakableTextPresentCheck"
+            android:hint="@string/date"/>
 
     </LinearLayout>
 
@@ -49,6 +54,7 @@
         android:layout_marginRight="25dp"
         android:layout_marginBottom="25dp"
         android:clickable="true"
+        android:onClick="buttonSaveOnClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_menu_save"

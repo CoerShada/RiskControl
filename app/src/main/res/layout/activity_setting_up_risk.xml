@@ -28,7 +28,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -102,11 +104,10 @@
             android:layout_marginBottom="10dp"
             android:text="0" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <TableLayout
+            android:id="@+id/table_minimization_measure"
             android:layout_width="match_parent"
-            android:layout_height="268dp">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

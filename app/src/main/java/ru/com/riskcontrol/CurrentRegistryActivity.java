@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CurrentRegistryActivity extends AppCompatActivity {
 
-    Registry thisRegistry;
+    Registry currentRegistry;
     Risk[] risks;
     DBHelper dpHelper = new DBHelper(this);
 
@@ -33,7 +33,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
                 int cursorId = cursor.getColumnIndex("_id");
 
 
-                thisRegistry = new Registry(cursor.getInt(cursorId), this);
+                currentRegistry = new Registry(cursor.getInt(cursorId), this);
                 cursor.close();
             }
         } else {
@@ -43,23 +43,23 @@ public class CurrentRegistryActivity extends AppCompatActivity {
                 int cursorId = cursor.getColumnIndex("_id");
 
 
-                thisRegistry = new Registry(cursor.getInt(cursorId), this);
+                currentRegistry = new Registry(cursor.getInt(cursorId), this);
                 cursor.close();
             }
         }
         setContentView(R.layout.activity_current_registry);
         TextView date = findViewById(R.id.textViewDate);
-        date.setText(thisRegistry.getDateOfCreation());
+        date.setText(currentRegistry.getDateOfCreation());
 
         TableLayout table_risks;
         table_risks = findViewById(R.id.table_risks);
         table_risks.setColumnShrinkable(0, true);
         int rows;
-        List<Integer> risksIds = thisRegistry.getRisksIds();
 
 
-        Cursor cursor = db.query("risks", null, null, null, null, null, null);
+        Cursor cursor = db.query("risks", null, "registry_id=?", new String[]{String.valueOf(currentRegistry.id)}, null, null, null);
         {
+            System.out.println("[MY]" + cursor.getCount());
             if (cursor.getCount() == 0) return;
             this.risks = new Risk[cursor.getCount()];
 
@@ -68,8 +68,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
             int cursorId = cursor.getColumnIndex("_id");
             if (cursor.getCount() > 0) {
                 do {
-                    if (!risksIds.contains(cursor.getInt(cursorId))) continue;
-                    risks[index] = new Risk(cursor.getInt(cursorId), thisRegistry, this);
+                    risks[index] = new Risk(cursor.getInt(cursorId), currentRegistry.id, this);
                     index++;
                 } while (cursor.moveToNext());
             }
@@ -94,7 +93,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
             tableRow.setOnClickListener(v -> {
                 int idRisk = v.getId();
                 Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-                intent.putExtra("registryId", thisRegistry.id);
+                intent.putExtra("registryId", currentRegistry.id);
                 intent.putExtra("riskId", idRisk);
                 intent.putExtra("isLast", idRisk == risks[risks.length - 1].id);
                 startActivity(intent);
@@ -120,7 +119,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
 
     public void buttonAddOnClick(View view){
         Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
-        intent.putExtra("registryId", thisRegistry.id);
+        intent.putExtra("registryId", currentRegistry.id);
         intent.putExtra("isLast", true);
         startActivity(intent);
     }

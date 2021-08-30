@@ -1,6 +1,8 @@
 package ru.com.riskcontrol;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,11 +16,17 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingUpRiskActivity extends AppCompatActivity {
 
     RiskType[] riskTypes;
+    MinimizationMeasure[] MinimizationMeasures;
     Registry currentRegistry;
     Risk currentRisk;
     DBHelper dpHelper = new DBHelper(this);
@@ -32,7 +40,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     SeekBar seekBarSeverityAssessment;
     TextView textViewSeverityAssessmentValue;
     TextView result;
-
+    TableLayout table_minimization_measure;
 
 
     @SuppressLint("SetTextI18n")
@@ -47,6 +55,8 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         currentRegistry = new Registry(registry_id, this);
         loadViews(isLast);
         loadRisk(risk_id);
+
+
 
         Cursor cursor = db.query("risk_types", null, null,null,null,null,null);
         {
@@ -90,6 +100,7 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         calculateResults();
     }
 
+    @SuppressLint("WrongViewCast")
     private void loadViews(boolean isLast){
 
         this.spinnerRiskTypes = findViewById(R.id.spinner_risk_type);
@@ -160,10 +171,15 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         if (isLast) return;
         //Дописать!
 
+
+        table_minimization_measure = findViewById(R.id.table_minimization_measure);
+        table_minimization_measure.setColumnShrinkable(0, true);
+
+
     }
 
     private void loadRisk(int id){
-        this.currentRisk = new Risk(id, currentRegistry,this);
+        this.currentRisk = new Risk(id, currentRegistry.id,this);
         if (this.currentRisk.id==-1) return;
         TextView name = findViewById(R.id.textinput_risk_name);
         name.setText(this.currentRisk.getName());
@@ -184,6 +200,49 @@ public class SettingUpRiskActivity extends AppCompatActivity {
         seekBarSeverityAssessment.setProgress((int) this.currentRisk.getSeverityAssessment());
 
         calculateResults();
+
+        SQLiteDatabase db = dpHelper.getReadableDatabase();
+
+        Cursor cursor = db.query("minimization_measure", null, "risk_id=?", new String[]{String.valueOf(currentRisk.id)},null,null,null);
+        {
+            System.out.println("[MY1]" + cursor.getCount());
+            if (cursor.getCount()==0) return;
+
+            this.MinimizationMeasures = new MinimizationMeasure[cursor.getCount()];
+
+            cursor.moveToFirst();
+            int index = 0;
+            int cursorId= cursor.getColumnIndex("_id");
+            int cursorRiskId= cursor.getColumnIndex("_id");
+            if (cursor.getCount()>0) {
+                do {
+                    TableRow tableRow = new TableRow(this);
+                    MinimizationMeasures[index] = new MinimizationMeasure(cursor.getInt(cursorId), cursor.getInt(cursorRiskId), this);
+                    tableRow.setId(MinimizationMeasures[index].id);
+
+                    TextView nameTable = new TextView(this);
+                    nameTable.setText(MinimizationMeasures[index].name);
+                    tableRow.addView(nameTable, 1);
+
+                    TextView dateTable = new TextView(this);
+                    dateTable.setText(MinimizationMeasures[index].date);
+                    tableRow.addView(dateTable, 2);
+
+                    tableRow.setOnClickListener(v -> {
+                        int idRow = v.getId();
+                        Intent intent = new Intent(SettingUpRiskActivity.this, SettingUpMinimizationMeasure.class);
+                        intent.putExtra("risk_id", currentRisk.id);
+                        intent.putExtra("minimization_measure_id", idRow);
+                        startActivity(intent);
+                    });
+
+                    table_minimization_measure.addView(tableRow, index);
+                    index++;
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
@@ -232,7 +291,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             this.currentRisk.setName(name.getText().toString().trim());
             this.currentRisk.setRiskTypeId(this.riskTypes[spinnerRiskTypes.getSelectedItemPosition()].id);
             this.currentRisk.save(this);
-            this.currentRegistry.addRisk(this);
             this.currentRegistry.save(this);
 
             startActivity(intent);

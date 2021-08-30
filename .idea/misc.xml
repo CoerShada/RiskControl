@@ -7,10 +7,17 @@
         <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_minimization_measure.xml" value="0.1" />
         <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_registry.xml" value="0.2015625" />
         <entry key="..\:/RC/app/src/main/res/layout/activity_setting_up_risk.xml" value="0.20520833333333333" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_current_registry.xml" value="0.2164855072463768" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_main.xml" value="0.2164855072463768" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_setting_up_factory.xml" value="0.2164855072463768" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_setting_up_minimization_measure.xml" value="0.20520833333333333" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_setting_up_registry.xml" value="0.21784420289855072" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_setting_up_risk.xml" value="0.2164855072463768" />
+        <entry key="..\:/RiskControl/app/src/main/res/layout/activity_setting_up_risk_type.xml" value="0.2164855072463768" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

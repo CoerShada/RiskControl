@@ -14,12 +14,13 @@ import java.util.Date;
 public class MinimizationMeasure {
 
     public final int id;
+    public final Risk parentRisk;
     public String name;
     public String responsible;
     public String date;
     public String dateOfCreation;
 
-    public MinimizationMeasure(int id, Context context){
+    public MinimizationMeasure(int id, int riskId ,Context context){
         this.id = id;
         if (id==-1) {
             Calendar cal = Calendar.getInstance();
@@ -27,6 +28,7 @@ public class MinimizationMeasure {
             Date date = cal.getTime();
             @SuppressLint("SimpleDateFormat") SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
             this.dateOfCreation = format1.format(date);
+            this.parentRisk = new Risk(riskId, -1, context);
             return;
         }
 
@@ -39,14 +41,14 @@ public class MinimizationMeasure {
             int cursorResponsible = cursor.getColumnIndex("responsible");
             int cursorDateOfCreation = cursor.getColumnIndex("date_of_creation");
             int cursorDate = cursor.getColumnIndex("date");
-
+            int cursorRiskId = cursor.getColumnIndex("risk_id");
             cursor.moveToFirst();
 
             this.name = cursor.getString(cursorName);
             this.responsible = cursor.getString(cursorResponsible);
             this.dateOfCreation = cursor.getString(cursorDateOfCreation);
             this.date = cursor.getString(cursorDate);
-
+            this.parentRisk = new Risk(cursor.getInt(cursorRiskId), -1 ,context);
 
             cursor.close();
         }
@@ -60,8 +62,8 @@ public class MinimizationMeasure {
 
         ContentValues cv = new ContentValues();
 
-
         cv.put("name", this.name);
+        cv.put("risk_id", this.parentRisk.id);
         cv.put("responsible", this.responsible);
         cv.put("date", this.date);
         cv.put("date_of_creation", this.dateOfCreation);
@@ -72,7 +74,7 @@ public class MinimizationMeasure {
 
         else
             db.update("minimization_measure", cv, "_id = ?", new String[]{String.valueOf(id)});
-
+        System.out.println("[MinimizationMeasure] Save has been successful!");
         return true;
     }
 }

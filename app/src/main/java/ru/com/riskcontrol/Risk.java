@@ -23,15 +23,16 @@ public class Risk {
     private Registry parentRegistry;
     private String dateOfCreation;
 
-    public Risk(int id, Registry parentRegistry,Context context){
+    public Risk(int id, int parentRegistryId, Context context){
         this.id = id;
-        this.parentRegistry = parentRegistry;
+
         if (id==-1){
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 1);
             Date date = cal.getTime();
             @SuppressLint("SimpleDateFormat") SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
             this.dateOfCreation = format1.format(date);
+            this.parentRegistry = new Registry(parentRegistryId, context);
             return;
         }
         DBHelper dpHelper = new DBHelper(context);
@@ -44,6 +45,7 @@ public class Risk {
             int cursorDetectionProbabilityEstimate = cursor.getColumnIndex("detection_probability_estimate");
             int cursorSeverityAssessment= cursor.getColumnIndex("severity_assessment");
             int cursorDate= cursor.getColumnIndex("date_of_creation");
+            int registryIdDate= cursor.getColumnIndex("registry_id");
 
             cursor.moveToFirst();
 
@@ -52,11 +54,15 @@ public class Risk {
             this.probabilityOfOccurrence = cursor.getFloat(cursorProbabilityOfOccurrence);
             this.detectionProbabilityEstimate = cursor.getFloat(cursorDetectionProbabilityEstimate);
             this.severityAssessment = cursor.getFloat(cursorSeverityAssessment);
+            this.parentRegistry = new Registry(parentRegistryId, context);
             this.calculateMagnitudeOfRisk(parentRegistry.getModel()==0);
             this.dateOfCreation = cursor.getString(cursorDate);
+            this.parentRegistry = new Registry(cursor.getInt(registryIdDate), context);
             cursor.close();
         }
+
     }
+
 
     public void setName(String name){
         this.name = name;
@@ -131,7 +137,7 @@ public class Risk {
         cv.put("detection_probability_estimate", this.detectionProbabilityEstimate);
         cv.put("severity_assessment", this.severityAssessment);
         cv.put("date_of_creation", this.dateOfCreation);
-
+        cv.put("registry_id", this.parentRegistry.id);
         if (this.id == -1)
             db.insert("risks", null, cv);
         else
