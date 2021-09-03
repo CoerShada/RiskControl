@@ -24,8 +24,9 @@ public class Risk {
     private String dateOfCreation;
 
     public Risk(int id, int parentRegistryId, Context context){
-        this.id = id;
 
+        DBHelper dpHelper = new DBHelper(context);
+        SQLiteDatabase db = dpHelper.getReadableDatabase();
         if (id==-1){
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 1);
@@ -33,10 +34,20 @@ public class Risk {
             @SuppressLint("SimpleDateFormat") SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
             this.dateOfCreation = format1.format(date);
             this.parentRegistry = new Registry(parentRegistryId, context);
+            Cursor cursor = db.query("risks", null, null, null,null,null,null);
+            {
+                if (cursor.getCount()==0){
+                    this.id = 0;
+                    return;
+                }
+                cursor.moveToLast();
+                int cursorId = cursor.getColumnIndex("_id");
+                this.id = cursor.getInt(cursorId)+1;
+                cursor.close();
+            }
             return;
         }
-        DBHelper dpHelper = new DBHelper(context);
-        SQLiteDatabase db = dpHelper.getReadableDatabase();
+        this.id = id;
         Cursor cursor = db.query("risks", null, "_id=?", new String[]{String.valueOf(id)},null,null,null);
         {
             int cursorName = cursor.getColumnIndex("name");

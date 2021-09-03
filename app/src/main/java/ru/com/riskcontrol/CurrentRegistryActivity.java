@@ -59,7 +59,6 @@ public class CurrentRegistryActivity extends AppCompatActivity {
 
         Cursor cursor = db.query("risks", null, "registry_id=?", new String[]{String.valueOf(currentRegistry.id)}, null, null, null);
         {
-            System.out.println("[MY]" + cursor.getCount());
             if (cursor.getCount() == 0) return;
             this.risks = new Risk[cursor.getCount()];
 
@@ -95,6 +94,7 @@ public class CurrentRegistryActivity extends AppCompatActivity {
                 Intent intent = new Intent(CurrentRegistryActivity.this, SettingUpRiskActivity.class);
                 intent.putExtra("registryId", currentRegistry.id);
                 intent.putExtra("riskId", idRisk);
+                intent.putExtra("exists", true);
                 intent.putExtra("isLast", idRisk == risks[risks.length - 1].id);
                 startActivity(intent);
             });

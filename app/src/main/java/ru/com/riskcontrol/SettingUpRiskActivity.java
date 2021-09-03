@@ -1,8 +1,7 @@
 package ru.com.riskcontrol;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,21 +9,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Toast;
 
 public class SettingUpRiskActivity extends AppCompatActivity {
 
+    private boolean exists;
     RiskType[] riskTypes;
     MinimizationMeasure[] MinimizationMeasures;
     Registry currentRegistry;
@@ -48,56 +46,23 @@ public class SettingUpRiskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_up_risk);
-        SQLiteDatabase db = dpHelper.getReadableDatabase();
         int registry_id = getIntent().getIntExtra("registryId", -1);
         int risk_id = getIntent().getIntExtra("riskId", -1);
+        this.exists = getIntent().getBooleanExtra("exists", false);
         boolean isLast = getIntent().getBooleanExtra("isLast", false);
-        currentRegistry = new Registry(registry_id, this);
+
         loadViews(isLast);
-        loadRisk(risk_id);
 
-
-
-        Cursor cursor = db.query("risk_types", null, null,null,null,null,null);
-        {
-            this.riskTypes = new RiskType[cursor.getCount()];
-            cursor.moveToFirst();
-            int index = 0;
-            int cursorId = cursor.getColumnIndex("_id");
-            if (cursor.getCount()>0) {
-                do {
-                    riskTypes[index++] = new RiskType(cursor.getInt(cursorId), this);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
+        loadContent(risk_id, registry_id);
+        if (savedInstanceState!=null){
+            name.setText(savedInstanceState.getString("name"));
         }
-        String[] riskTypesString = new String[riskTypes.length+1];
-        for (int i = 0; i<riskTypes.length; i++)
-            riskTypesString[i] = riskTypes[i].name;
-        riskTypesString[riskTypesString.length-1] = getApplicationContext().getString(R.string.add);
-
-        Spinner spinnerRiskTypes = (Spinner) findViewById(R.id.spinner_risk_type);
-        ArrayAdapter<String> adapterRiskTypes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, riskTypesString);
-        adapterRiskTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerRiskTypes.setAdapter(adapterRiskTypes);
+        loadViewsContent();
 
 
-        spinnerRiskTypes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if (l==riskTypes.length){
-                    Intent intent = new Intent(SettingUpRiskActivity.this, SettingUpRiskTypeActivity.class);
-                    intent.putExtra("registryId", currentRegistry.id);
-                    startActivity(intent);
-                }
-            }
 
-            public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
-
-        calculateResults();
     }
 
     @SuppressLint("WrongViewCast")
@@ -161,27 +126,70 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
+
+        this.result = findViewById(R.id.magnitude_of_risk);
+
+        table_minimization_measure = findViewById(R.id.table_minimization_measure);
+        table_minimization_measure.setColumnShrinkable(0, true);
+        if (isLast) return;
+        //Дописать!
+
+
+
+
+
+    }
+
+    private void loadViewsContent(){
+        SQLiteDatabase db = dpHelper.getReadableDatabase();
+
+        Cursor cursor = db.query("risk_types", null, null,null,null,null,null);
+        {
+            this.riskTypes = new RiskType[cursor.getCount()];
+            cursor.moveToFirst();
+            int index = 0;
+            int cursorId = cursor.getColumnIndex("_id");
+            if (cursor.getCount()>0) {
+                do {
+                    riskTypes[index++] = new RiskType(cursor.getInt(cursorId), this);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        String[] riskTypesString = new String[riskTypes.length+1];
+        for (int i = 0; i<riskTypes.length; i++)
+            riskTypesString[i] = riskTypes[i].name;
+        riskTypesString[riskTypesString.length-1] = getApplicationContext().getString(R.string.add);
+
+        Spinner spinnerRiskTypes = findViewById(R.id.spinner_risk_type);
+        ArrayAdapter<String> adapterRiskTypes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, riskTypesString);
+        adapterRiskTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRiskTypes.setAdapter(adapterRiskTypes);
+
+
+        spinnerRiskTypes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if (l==riskTypes.length){
+                    Intent intent = new Intent(SettingUpRiskActivity.this, SettingUpRiskTypeActivity.class);
+                    intent.putExtra("registryId", currentRegistry.id);
+                    startActivity(intent);
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         if (currentRegistry.getModel()==0) {
             findViewById(R.id.textview_detection_probability_estimate).setVisibility(View.GONE);
             seekBarDetectionProbabilityEstimate.setVisibility(View.GONE);
             textViewDetectionProbabilityEstimateValue.setVisibility(View.GONE);
         }
-        this.result = findViewById(R.id.magnitude_of_risk);
 
-        if (isLast) return;
-        //Дописать!
+        if (!this.exists) return;
 
-
-        table_minimization_measure = findViewById(R.id.table_minimization_measure);
-        table_minimization_measure.setColumnShrinkable(0, true);
-
-
-    }
-
-    private void loadRisk(int id){
-        this.currentRisk = new Risk(id, currentRegistry.id,this);
-        if (this.currentRisk.id==-1) return;
-        TextView name = findViewById(R.id.textinput_risk_name);
         name.setText(this.currentRisk.getName());
 
 
@@ -201,9 +209,9 @@ public class SettingUpRiskActivity extends AppCompatActivity {
 
         calculateResults();
 
-        SQLiteDatabase db = dpHelper.getReadableDatabase();
 
-        Cursor cursor = db.query("minimization_measure", null, "risk_id=?", new String[]{String.valueOf(currentRisk.id)},null,null,null);
+
+        cursor = db.query("minimization_measure", null, "risk_id=?", new String[]{String.valueOf(currentRisk.id)},null,null,null);
         {
             System.out.println("[MY1]" + cursor.getCount());
             if (cursor.getCount()==0) return;
@@ -217,16 +225,22 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             if (cursor.getCount()>0) {
                 do {
                     TableRow tableRow = new TableRow(this);
+                    tableRow.setLayoutParams(new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    ));
+
+
                     MinimizationMeasures[index] = new MinimizationMeasure(cursor.getInt(cursorId), cursor.getInt(cursorRiskId), this);
                     tableRow.setId(MinimizationMeasures[index].id);
 
                     TextView nameTable = new TextView(this);
                     nameTable.setText(MinimizationMeasures[index].name);
-                    tableRow.addView(nameTable, 1);
+                    tableRow.addView(nameTable, 0);
 
                     TextView dateTable = new TextView(this);
                     dateTable.setText(MinimizationMeasures[index].date);
-                    tableRow.addView(dateTable, 2);
+                    tableRow.addView(dateTable, 1);
 
                     tableRow.setOnClickListener(v -> {
                         int idRow = v.getId();
@@ -235,7 +249,6 @@ public class SettingUpRiskActivity extends AppCompatActivity {
                         intent.putExtra("minimization_measure_id", idRow);
                         startActivity(intent);
                     });
-
                     table_minimization_measure.addView(tableRow, index);
                     index++;
 
@@ -243,6 +256,14 @@ public class SettingUpRiskActivity extends AppCompatActivity {
             }
             cursor.close();
         }
+
+
+    }
+
+    private void loadContent(int risk_id, int registry_id){
+        this.currentRegistry = new Registry(registry_id, this);
+        this.currentRisk = new Risk(risk_id, currentRegistry.id,this);
+
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
@@ -285,21 +306,61 @@ public class SettingUpRiskActivity extends AppCompatActivity {
 
     public void onClickSave(View view){
 
+        try {
+            if (name.getText().toString().trim().length() > 0) {
 
-        if (name.getText().toString().trim().length()>0){
-            Intent intent = new Intent(SettingUpRiskActivity.this, CurrentRegistryActivity.class);
-            this.currentRisk.setName(name.getText().toString().trim());
-            this.currentRisk.setRiskTypeId(this.riskTypes[spinnerRiskTypes.getSelectedItemPosition()].id);
-            this.currentRisk.save(this);
-            this.currentRegistry.save(this);
+                //Intent intent = new Intent(SettingUpRiskActivity.this, CurrentRegistryActivity.class);
+                this.currentRisk.setName(name.getText().toString().trim());
+                this.currentRisk.setRiskTypeId(this.riskTypes[spinnerRiskTypes.getSelectedItemPosition()].id);
+                this.currentRisk.save(this);
+                this.currentRegistry.save(this);
+                this.exists = true;
 
-            startActivity(intent);
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Сохранено.",
+                        Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.BOTTOM, 0, 0);
+                toast.show();
+                return;
+                //startActivity(intent);
+            }
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Ошибка! Поле \"Наименование риска\" не должно быть пустым.",
+                    Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.BOTTOM, 0, 0);
+            toast.show();
+        }
+        catch (Exception e){
+            System.err.println("[SettingUpRiskActivity]" + e);
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Не удалось сохранить информацию о риске!",
+                    Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.BOTTOM, 0, 0);
+            toast.show();
         }
     }
 
     public void onClickAddMinimizationMeasure(View view){
         Intent intent = new Intent(SettingUpRiskActivity.this, SettingUpMinimizationMeasure.class);
-        intent.putExtra("riskId", true);
+        intent.putExtra("risk_id", currentRisk.id);
         startActivity(intent);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putString("name", name.getText().toString());
+        outState.putInt("registry_id", currentRegistry.id);
+
+        super.onSaveInstanceState(outState);
+    }
+    // получение ранее сохраненного состояния
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        loadViews(false);
+        loadContent(-1, savedInstanceState.getInt("registry_id"));
+        name.setText(savedInstanceState.getString("name"));
+    }
+
 }

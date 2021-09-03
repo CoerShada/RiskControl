@@ -74,6 +74,7 @@ public class MinimizationMeasure {
 
         else
             db.update("minimization_measure", cv, "_id = ?", new String[]{String.valueOf(id)});
+        System.out.println(this.parentRisk.id);
         System.out.println("[MinimizationMeasure] Save has been successful!");
         return true;
     }
